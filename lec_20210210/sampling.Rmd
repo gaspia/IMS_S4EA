@@ -1,0 +1,48 @@
+---
+title: "S4DS - Sampling examples - 20210210"
+output: html_notebook
+---
+
+## S4DS Lecture 01 from 20th Feb 2021
+
+### Sampling example in R
+
+Creating a population of Students and agents into a data frame.
+
+```{r echo=FALSE}
+Names = c("Bob", "Mary", "William", "George", "Lucas", "Mathew", "Angel", "Steven", "Ariana", "Chen")
+# printing the size of the array
+length (Names)
+```
+---
+A New array with the ages
+
+```{r}
+Ages = c(22, 23, 21, 25, 28, 25, 23, 23, 32, 28)
+length(Ages)
+```
+---
+Now for the data frame creation
+```{r}
+Pop = data.frame(Names = Names, Ages = Ages)
+
+head(Pop)
+```
+---
+
+Sampling 4 students out of the data frame without replacement
+---
+```{r}
+S = sample(1:10,size = 4, replace = FALSE )
+
+# checking the results
+head(S)
+
+```
+---
+Creating a final data frame with all the sampled candidates data (Ages)
+
+```{r}
+S.data = Pop[S,]
+S.data
+```

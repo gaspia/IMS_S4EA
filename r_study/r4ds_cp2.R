@@ -86,12 +86,12 @@ dim (m)
 
 attributes(m)
 
-# matrices are constructed row-wyse, top-to-bottom
+# matrices are constructed row-wise, top-to-bottom
 
 m <- matrix(1:6, nrow = 2, ncol = 3)
 m
 
-# can also get a matrix from a vectors by adding a dimmension attribute
+# can also get a matrix from a vectors by adding a dimension attribute
 
 m <- 1:10
 m

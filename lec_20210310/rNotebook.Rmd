@@ -1,0 +1,78 @@
+---
+title: "Lec05 Exercises"
+output: html_notebook
+---
+
+## Exercise 32
+A Sampling Distribution for Time to Finish in 2012 Olympic Men’s Marathon
+Use R to generate a sampling distribution of sample means using a sample size of n=10 from the population of all times to finish the 2016 Olympic Men’s Marathon, available in the Minutes column of the file OlympicMarathon2016. What are the smallest and largest sample means in the distribution? What is the standard deviation of the sample means (in other words, what is the standard error?)
+
+
+```{r}
+library(boot)
+marathon <- read_excel("OlympicMarathon2016.xlsx")
+marathon_S <- marathon[sample(1:dim(marathon)[1], 10),]
+mean.b <- function(d, indices) {
+  mean(d$Minutes[indices])
+}
+marathon_results <- boot(data=marathon_S, statistic = mean.b, R=2000)
+marathon_results
+
+```
+```{r}
+plot(marathon_results)
+```
+```{r}
+str(marathon_results)
+```
+```{r}
+min(marathon_results$t)
+```
+
+
+```{r}
+max(marathon_results$t)
+```
+Using a bigger sample size n=20
+```{r}
+
+marathon_S <- marathon[sample(1:dim(marathon)[1], 20),]
+mean.b <- function(d, indices) {
+  mean(d$Minutes[indices])
+}
+marathon_results <- boot(data=marathon_S, statistic = mean.b, R=2000)
+plot(marathon_results)
+```
+##Exercise 33 - NHL Penalty Minutes
+The file OttawaSenators2019, among other data contains the number of points scored and penalty minutes for 26 ice hockey players on the Ottawa Senators NHL team for the 2018–2019 season. Assume that we consider these players to be a sample of all NHL players.
+
+Create a dotplot of the distribution of penalty minutes (PenMin) for the original sample of 26 players. Comment on the shape, paying particular attention to skewness and possible outliers.
+
+Find the mean and standard deviation of the penalty minute values for the original sample.
+
+Use R to construct a bootstrap distribution for the mean penalty minutes for samples of size n=26 NHL players. Comment on the shape of this distribution, especially compared to the shape of the original sample.
+
+Compute the standard deviation of the bootstrap means using the distribution in (3.).
+
+Compare this value to the standard deviation of the penalty minutes in the original sample.
+
+Construct a 95% confidence interval for the mean penalty minutes of NHL players.
+
+Give a reason why it might not be reasonable to use the players on one team as a sample of all players in a league.
+
+```{r}
+senators <- read_excel("OttawaSenators2019.xlsx")
+boxplot(senators$PenMins)
+hist(senators$PenMins)
+```
+ggPlot example
+
+```{r}
+library(ggplot2)
+ggplot (senators, aes(Player, PenMins)) + geom_point()
+```
+Mean and standart deviation
+```{r}
+mean(senators$PenMins)
+stand
+```

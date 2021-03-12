@@ -1,0 +1,192 @@
+---
+title: "R Notebook - Descibing Data II"
+output: html_notebook
+---
+
+# One Quantitative Variable
+
+## Histograms
+
+Graphs for 1 Quantitative var
+
+```{r - Histograms}
+#fetching the dataset
+data(airquality)
+#Compactly display the internal structure of the object
+str(airquality)
+
+```
+
+Choosing a "feature" a.k.a Quantitative var = Temperature
+
+```{r}
+Temperature <- airquality$Temp
+hist(Temperature)
+
+```
+
+If we want to have the probability distribution instead of the actual frequency, we can set the parameter 'freq=F'
+
+```{r}
+hist(Temperature, freq = F)
+```
+
+The hist() function returns a list of 6 objects :
+
+-   \$breaks: Bins of the graph
+
+-   \$counts: Frequency (for each bin?- to check)
+
+-   \$density: probability
+
+-   \$mids (mid points of the cells)
+
+-   xname: x arguments of the cells
+
+-   equidist: Bollean indicating that the breaks are equally spaced
+
+We can use the return values of the hist for further processing
+
+```{r}
+#use the return from hist to complete the histogram
+h = hist(Temperature, ylim = c(0,40))
+#see the contents of h (previous hist)
+str(h)
+# use these to complete the graph
+text(h$mids, h$counts, labels = h$counts, adj=c(0.5, -0.5))
+
+```
+
+#### Truehist() a Hist() alternative
+
+Scales the counts to give an estimate of the probability
+
+```{r}
+th = truehist(Temperature)
+th# th doesn't return any value
+```
+
+## Shape
+
+Measures of central tendency
+
+-   Mean
+
+-   Median - Middle of a distribution that is ordered from lowest to highest value in the X-axis
+
+-   Mode - Value with the highest frequency
+
+Note:R does not have a standard in-built function to calculate mode. So we create a user function to calculate mode of a data set in R. This function takes the vector as input and gives the mode value as output.
+
+Simple example
+
+```{r}
+ex = c(5,7,8,9,9,11,13)
+# function to calculate the mode
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+ex_ct=c(mean(ex), median(ex), getmode(ex))
+str(ex_ct)
+```
+
+## Spread
+
+Measures of Spread
+
+-   Variance
+
+-   Standard deviation (most used where we are handling quantitative data and an aprox. normal distribution)
+
+Standard deviation = SQRT(Variance)
+
+### Standard Deviation
+
+Roughly the avg. difference between the values and the mean
+
+-   denoted by an "s" or a greek "rhó" when referring to the population
+
+How it's calculated:
+
+1.  Compute the sample mean
+2.  Subtract the sample mean from each individual value
+3.  square (\^2) each deviation (result from 2)
+4.  Sum all deviations
+5.  divide the sum of squares by n-1 (= Sample variance)
+6.  SQRT the result
+
+```{r}
+data=c(5,7,8,9,9,11,13) 
+data
+# Step 1: compute the mean 
+x.mean=mean(data)
+x.mean
+# Step 2: compute the deviations 
+x.deviations=data-x.mean 
+x.deviations
+# Step 3: square de deviations 
+x.deviations.squared=x.deviations^2
+x.deviations.squared
+# Step 4: sum the squared deviations 
+x.SS = sum(x.deviations.squared) 
+x.SS
+# Step 5: Divide by n-1 to compute variance 
+x.variance=x.SS/6
+x.variance
+# Step 6: Take the square root of the variance 
+x.s=sqrt(x.variance)
+x.s
+```
+
+### Empirical Rule
+
+It's a statement applicable in **normal distributions**
+
+So in a **normal distribution** we can assume:
+
+1.  Aprox. 68% of the data will be within 1 Std. deviation of the mean
+2.  Aprox. 95% of observations fall within 2 Std. deviations of the mean
+3.  Aprox. 99,7% will be within 3 std deviations of the mean
+
+```{r} ### to include an example in R of a normal distribution}
+
+```
+
+## Z-Cores
+
+Z-Score describes one observation in relation to the distribution of all observations.
+
+It can also be seen as the distance of an observation to the mean in std. deviations -\> a.k.a. Standardized score
+
+##### Remarks
+
+-   The Z-Score this allows an abstraction to the actual units of measure of the variables we are analyzing
+
+-   Usually relevant to analyze individuals or sub-populations of the distribution
+
+### z-distribution or Standard Normal Distribution
+
+A bell-shaped distribution with a mean of 0 and standard deviation of 1, also known as the standard normal distribution
+
+## Percentiles
+
+We can determine a proportion of values falling below a given value, e.g. a student scores better than 90% then the student falls on the 90th percentile.
+
+## Five Number Summary
+
+Minimum, Q1, Median, Q3 Maximum
+
+-   Q1 = 25th percentile or 1st quartile
+
+-   Q2 = 75th percentile or 3rd quartile
+
+These are used to describe some key figures of a distribution. Using the 5 number summary we can also calculate the range and interquartile range
+
+#### Remark
+
+If we we are given, or able to obtain, the 5 numbers, we have basically everything about a distribution.
+
+```{r}
+
+```

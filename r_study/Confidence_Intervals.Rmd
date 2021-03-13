@@ -3,15 +3,282 @@ title: "R Notebook - Confidence Intervals"
 output: html_notebook
 ---
 
+# Confidence Intervals
 
+Confidence intervals use data collected from a sample to estimate a population parameter (statistics inference).
+
+A range computed using sample statistics to estimate an unknown population parameter with a stated level of confidence.
+
+Used in :
+
+-   Cases where we don't have access to the whole population, a confidence level can be built from the sample.
+
+-   To estimate the population distribution assuming a **stated** level of confidence.
+
+### Relevant Statistic Parameters
+
+|                             | Population Parameter | Sample Statistic |
+|-----------------------------|----------------------|------------------|
+| Mean                        | µ                    | x ¯              |
+| Difference in 2 means       | µ1 − µ2              | x1¯ − x2¯        |
+| Proportion                  | p                    | p\^              |
+| Difference in 2 proportions | p1 − p2              | p1 \^ - p2\^     |
+| Correlation                 | ρ                    | r                |
+
+## Sampling Distributions
+
+Sample statistics are random variables because they vary from sample to sample (random sampling).
+
+As a result, sample statistics have a distribution called the **sampling distribution.**
+
+#### Remark
+
+-   For a single categorical variable this may be referred to as the standard error of the proportion.
+
+-   For a single quantitative variable this may be referred to as the standard error of the mean.
+
+-   If a sampling distribution is constructed using data from a population, the mean of the sampling distribution will be approximately equal to the population parameter.
+
+Thus
+
+#### Sampling Distribution
+
+Distribution of sample statistics with a mean approximately equal to the mean in the original distribution and a standard deviation known as the standard error
+
+#### Standard Error
+
+Standard deviation of a sampling distribution
+
+### Using R to Construct a Sampling Distribution Given a Known Population Proportion
+
+Note that this method of constructing a sampling distribution requires that we have population data, where in most cases we do not know all of the population values.
+
+(If we did, then we wouldn't need to construct a confidence interval to estimate the population parameter!)
+
+As you look through the following examples, note that when the sample size is large the sampling distribution is approximately symmetrical and centered at the population parameter.
+
+#### Constructing a Sampling distribution from a known population
+
+-   The process of constructing a sampling distribution from a known population is the same for all types of parameters (i.e.,one group proportion, one group mean, difference in two proportions, difference in two means and correlation).
+
+     1. take a simple random sample of n from the population without replacement
+
+     2. record the sample statistic of interest
+
+     3. return those observations back into the population
+
+     4. repeat many times
+
+#### Remark
+
+-   If the sample size is large, the sampling distribution will be approximately normally distributed with a mean equal to the population parameter
+
+**That distribution of sample statistics is known as the sampling distribution.**
+
+##### Example in R for a Sampling distribution for a quantitative variable
 
 ```{r}
-plot(cars)
+# Constructing a sampling distribution using the “NFL Contracts (2015 in Millions)” dataset that is built into the sampling distribution for a mean feature in R.
+
+# This dataset includes the salaries of all 2,099 NFL players in 2015 as of the start of that season. We’ll construct a sampling distribution given n = 5.
+
+#load the dataser
+nfl=read.csv("../datasets/NFL2015.csv", header=T)
+head(nfl)
+
+# The five number summary of the yearly salaries
+summary(nfl$YearlySalary)
+
+# how may observation do we have?
+dim(nfl)
+
+# let's look at the histogram
+hist(nfl$YearlySalary)
+
+# Defining sampling size and creating an object to store results
+n=5 # sample size
+# object to store samples 
+s<-matrix(NA, nrow=5, ncol=5000) 
+
+#First sample: there are a total of 2099 cases; sampling 5 case numbers between 1 and 2099 and storing the data
+s[,1]=nfl$YearlySalary[sample(1:2099,n)] 
+mean(s[,1]) # and its mean 
+sd(s[,1]) # and its se
+median(s[,1]) # its median 
+
+#Second sample: there are a total of 2099 cases; sampling 5 case numbers between 1 and 2099 and storing the data
+s[,2]=nfl$YearlySalary[sample(1:2099,n)]
+mean(s[,2]) # and its mean 
+sd(s[,2]) # and its se
+median(s[,2]) # its median
+
+#First 1000 samples: there are a total of 2099 cases; sampling 5 case numbers between 1 and 2099 and storing the data; plotting the histogram os the sample means
+
+for (i in 3:1000){
+  s[,i]=nfl$YearlySalary[sample(1:2099,n)]
+}
+mean.s=colMeans(s[,1:1000]) 
+hist(mean.s, 
+     main="Histogram of 1000 sample means",
+     xlab=substitute(paste("Mean=", 
+                           mean, "; Stdev=",
+                           std, " of 1000 samples"),
+                     list(mean=signif(mean(mean.s),3), 
+                          std=signif(sd(mean.s),3))))
+
+
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+```{r}
+# First 2000 samples: there are a total of 2099 cases; sampling 5 case numbers between 1 and 2099 and storing the data; plotting the histogram os the sample means
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+for (i in 1001:2000){
+  s[,i]=nfl$YearlySalary[sample(1:2099,n)]
+}
+mean.s=colMeans(s[,1:2000]) 
+hist(mean.s, main="Histogram of 2000 sample means", 
+     xlab=substitute(paste("Mean=", 
+                           mean, "; Stdev=",
+                           std, " of 2000 samples"), 
+                     list(mean=signif(mean(mean.s),3),
+                          std=signif(sd(mean.s),3))))
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
+
+```
+
+```{r}
+# Last 3000 samples: there are a total of 2099 cases; sampling 5 case numbers between 1 and 2099 and storing the data; plotting the histogram of the sample means
+
+for (i in 2001:5000){
+  s[,i]=nfl$YearlySalary[sample(1:2099,n)]
+}
+mean.s=colMeans(s) # additionally 1000 sample means 
+hist(mean.s, main="Histogram of 5000 sample means",
+     xlab=substitute(paste("Mean=", 
+                           mean, "; Stdev=", 
+                           std, " of 5000 samples"),
+                     list(mean=signif(mean(mean.s),3),
+                          std=signif(sd(mean.s),3))))
+
+```
+
+##### **Example in R for a Categorical variable sampling distribution**
+
+We are conducting an experiment in which we are flipping a fair coin 5 times and counting how many times we flip heads.
+
+Whether or not the coin lands on heads is a categorical variable with a probability of 0.50.
+
+Using R to construct a distribution of sample proportions that we could use to determine the probability of any of the possible combinations of successes and failures.
+
+```{r}
+p=0.5 # probability of success (heads)
+n=5 # sample size
+# object to store samples 
+s<-matrix(NA, nrow=5, ncol=10000) 
+# first 1000 samples
+for (i in 1:1000){
+  s[,i]=rbinom(n,1,p)
+}
+
+# respective 1000 sample means
+mean.s=colMeans(s[,1:1000])
+# frequency plot
+plot(table(mean.s), 
+     main="Histogram of 1000 sample means", 
+     ylab="Frequency", 
+     xlab=substitute(paste("Mean=", 
+                           mean, "; Stdev=",
+                           std, " of 1000 samples"),
+                     list(mean=signif(mean(mean.s),3),
+                          std=signif(sd(mean.s),3))))
+
+
+```
+
+```{r}
+# additional 7000 samples 
+for (i in 1001:8000){
+  #randomizing results one by one with a probability of 0,5 (p)
+  s[,i]=rbinom(n,1,p)
+}
+# calculating the mean of the means of all columns
+mean.s=colMeans(s[,1:8000])
+#ploting the histogram
+plot(table(mean.s), 
+     main="Histogram of 8000 sample means",
+     ylab="Frequency", 
+     xlab=substitute(paste("Mean=", 
+                           mean, "; Stdev=",
+                           std, " of 8000 samples"),
+                     list(mean=signif(mean(mean.s),3),
+                          std=signif(sd(mean.s),3))))
+
+
+
+```
+
+### Impact of Sample Size
+
+There is an inverse relationship between sample size and standard error.
+
+In other words:
+
+-   As the sample size increases, the variability of sampling distribution decreases.
+
+-   Also, as the sample size increases the shape of the sampling distribution becomes more similar to a normal distribution regardless of the shape of the population.
+
+The example "NFL Contracts (2015 in millions)" was used to construct the two sampling distributions below.
+
+In the first, a sample size of 10 was used. In the second, a sample size of 100 was used.
+
+```{r}
+n=10 # sample size 
+# Building the results matrix
+s<-matrix(NA, nrow=10, ncol=1000) 
+for (i in 1:1000){
+  s[,i]=nfl$YearlySalary[sample(1:2099,n)]
+  }
+mean.s1=colMeans(s) # respective 1000 sample means
+hist(mean.s1, 
+     main="Histogram of 1000 sample means", 
+     xlab=substitute(paste("Mean=", 
+                           mean, "; Stdev=",
+                           std, " of 1000 samples; n=10"),
+                     list(mean=signif(mean(mean.s1),3),
+                          std=signif(sd(mean.s1),3))))
+
+```
+
+For a sample size of 100
+
+```{r}
+n=100 # sample size 
+s<-matrix(NA, nrow=100, ncol=1000)
+for (i in 1:1000){
+  s[,i]=nfl$YearlySalary[sample(1:2099,n)]
+  }
+mean.s2=colMeans(s) # respective 1000 sample means
+hist(mean.s2, 
+     main="Histogram of 1000 sample means",
+     xlab=substitute(paste("Mean=", 
+                           mean, "; Stdev=",
+                           std, " of 1000 samples; n=100"),
+                     list(mean=signif(mean(mean.s2),3),
+                          std=signif(sd(mean.s2),3))))
+
+```
+
+-   With a sample size of 10, the standard error of the mean was 0.98.
+
+-   With a sample size of 100 the standard error of the mean was 0.3.
+
+-   When the sample size increased the standard error decreased.
+
+-   Also note that the population was strongly skewed to the right.
+
+-   With the smaller sample size, the sampling distribution was also skewed to the right, though not as strongly skewed as the population.
+
+-   With the larger sample size, the sampling distribution was approximately normal.
+
+## Introduction to Sampling intervals

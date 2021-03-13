@@ -1,6 +1,8 @@
 ---
 title: "R Notebook - Descibing Data II"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 # One Quantitative Variable
@@ -62,8 +64,8 @@ text(h$mids, h$counts, labels = h$counts, adj=c(0.5, -0.5))
 Scales the counts to give an estimate of the probability
 
 ```{r}
-th = truehist(Temperature)
-th# th doesn't return any value
+# th = truehist(Temperature)
+# th # th doesn't return any value
 ```
 
 ## Shape
@@ -310,28 +312,28 @@ female heights.
 
 ```{r}
 ### again, missing the data set
-par(mfrow=c(1,3))
-boxplot(males$Height,females$Height, names=c("Males","Females"))
-plot(sort(males$Height),1:length(males$Height)/length(males$Height), 
-     par(new=TRUE)
-     plot(sort(females$Height),
-          1:length(females$Height[-1])/length(females$Height[-1]),
-          type="s",
-          xlab=c(""), 
-          ylab=c(""),
-          col="blue")
-legend("topleft",c("Male","Female"),fill=c("red","blue"))
-qqplot(males$Height,
-       females$Height, 
-       xlab="males height", 
-       ylab="females height")
-abline(a=0,b=1)
-q<-c(0.25,0.50,0.75)
-points(quantile(males$Height,q,na.rm=TRUE),
-       quantile(females$Height,q,na.rm=TRUE),
-       measures=paste0(c("Q1=(","M=(","Q3=("),
-                       quantile(males$Height,q,na.rm=TRUE),
-                       c(rep(",",3)),
+#par(mfrow=c(1,3))
+#boxplot(males$Height,females$Height, names=c("Males","Females"))
+#plot(sort(males$Height),1:length(males$Height)/length(males$Height), 
+#     par(new=TRUE)
+#     plot(sort(females$Height),
+#          1:length(females$Height[-1])/length(females$Height[-1]),
+#          type="s",
+#          xlab=c(""), 
+#          ylab=c(""),
+#          col="blue")
+#legend("topleft",c("Male","Female"),fill=c("red","blue"))
+#qqplot(males$Height,
+#       females$Height, 
+#       xlab="males height", 
+#       ylab="females height")
+#abline(a=0,b=1)
+#q<-c(0.25,0.50,0.75)
+#points(quantile(males$Height,q,na.rm=TRUE),
+#       quantile(females$Height,q,na.rm=TRUE),
+#       measures=paste0(c("Q1=(","M=(","Q3=("),
+#                       quantile(males$Height,q,na.rm=TRUE),
+#                       c(rep(",",3)),
 
 ```
 
@@ -442,7 +444,7 @@ In the example above:
 # Data concerning sales at student-run coffee shop were retrieved from:
 # http://www.amstat.org/publications/jse/v19n1/cafedata.xls
 # http://www.amstat.org/publications/jse/v19n1/cafedata documentation.
-
+library(readxl)
 cafe = read_xls("../datasets/cafedata.xls")
 # describing the data set
 str(cafe)
@@ -653,7 +655,7 @@ Before plotting the data is necessary to create a time series object containing 
 
 ```{r}
 # install.packages("pscl") 
-# library("pscl") 
+library("pscl") 
 X <- tapply(prussian$y, prussian$year, sum) 
 names(X)=NULL 
 horse.deaths=ts(X, start=1875) 

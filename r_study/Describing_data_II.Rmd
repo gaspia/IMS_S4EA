@@ -149,9 +149,9 @@ So in a **normal distribution** we can assume:
 2.  Aprox. 95% of observations fall within 2 Std. deviations of the mean
 3.  Aprox. 99,7% will be within 3 std deviations of the mean
 
-```{r} ### to include an example in R of a normal distribution}
+\`\`\`{r} \#\#\# to include an example in R of a normal distribution}
 
-```
+\`\`\`
 
 ## Z-Cores
 
@@ -187,6 +187,503 @@ These are used to describe some key figures of a distribution. Using the 5 numbe
 
 If we we are given, or able to obtain, the 5 numbers, we have basically everything about a distribution.
 
-```{r}
+### Range
 
+Range = Max-Min -\> Range can be heavily influenced by outliers, so the Interquartile range is often preferred for analysis.
+
+### Inter-Quartile Range
+
+IQR = Q3-Q1
+
+```{r}
+IQR(data)
+```
+
+```{r}
+dt=c(5,7,9,11, 13)
+summary(dt)
+
+fivenum(dt)
+range(dt)
+IQR(dt)
+```
+
+## BoxPlot
+
+### Single boxplot
+
+With the five number summary we can build a boxplot a.k.a. Box and whisker plot.
+
+In a boxplot, outliers are denoted with a circle or an asterisk
+
+-   The whiskers on the top or bottom, extend to the higher/lowest values that are not outliers.
+
+-   The box represents 50% of the observations, being limited by the Q1 and Q3 at the bottom and top.
+
+-   The line in the middle represents the median
+
+```{r}
+nfl = read.csv("../datasets/NFL2015.csv")
+str(nfl)
+boxplot(nfl$YearlySalary, main="Box plot of BFL salaries in 2015", ylab="Salary")
+# enlarging the range as we are having a lot of outliers
+boxplot(nfl$YearlySalary, main="Box plot of BFL salaries in 2015", ylab="Salary", range = 5)
+
+```
+
+# Identifying Outliers
+
+### IQR Method
+
+Identifying outliers by setting a fence outside Q1 and Q3. Any values outside this fence are considered outliers.
+
+The fences (upper/lower) are 1.5 IQR below/above Q1/Q3 (subtracted to Q1 / added to Q3).
+
+Any observation outside these fences are considered outliers
+
+#### Remark - Best practices
+
+-   While removing outliers, it's a good practice no to remove more than 3% of the observations.
+
+-   Caution and dedicated analysis is advised for cases where outliers are too close to the the fences. Depending on the nature of the data it might make sense to consider them.
+
+```{r}
+dt = c(74,88,78,90,94,90,84,90,98,80, 120, 150)
+summary(dt)
+fivenum(dt)
+range (dt)
+IQR(dt)
+a=boxplot(dt)
+```
+
+```{r}
+str(a)
+a$stats
+```
+
+# One Quantitative Variable and One Categorical Variable
+
+Often we want to compare groups in terms of one quantitative variable.
+
+E.g. comparison of height between females and males:
+
+-   Gender: Categorical Variable
+
+-   Height: Quantitative variable
+
+Below you will find examples of constructing side-by-side boxplots and histograms with groups using R.
+
+-   The side-by-side boxplots allow us to easily compare the median, IQR, and range of the two groups.
+
+-   The histograms with groups allow us to compare the shape, central tendency, and variability of the two groups.
+
+```{r}
+### Need a proper dataset to test this
+#class_survey=read.csv("class_survey.csv",header=TRUE)
+#boxplot(class_survey$Height~class_survey$Biological.Sex, + main="Boxplot of Height (inches)", ylab="Height (inches)")
+
+#par(mfrow=c(1,2))
+#males=subset(class_survey,levels(class_survey$Biological.Sex)=="Male")
+#females=subset(class_survey, levels(class_survey$Biological.Sex)=="Female")
+#hist(males$Height, main="Boxplot of Male Height (inches)", ylab="Height(inches)",cex=0.4)
+#hist(females$Height, main="Boxplot of Female Height (inches)", ylab="Height (inches)",cex=0.4)
+
+
+### Need a proper dataset to test this
+```
+
+### Q-Q Plots
+
+(A.k.a. Interquartile plot)
+
+In addition to side by side boxplots or histograms, we can also compare two cumulative distribution functions directly with the quantile-quantile or Q-Q plot.
+
+-   If the quantitative data sets x and y have the same number of observations then this is simply plot(sort(x),sort(y)). In this case the Q-Q plot matches each of the quantiles for the two data sets.
+
+• The points on the Q-Q plot indicate values having close quantiles for male and
+
+female heights.
+
+• To see the first and third quartiles, Q1 and Q3 as well as the median, we use the points and the quantile commands.
+
+• The points command was used to add the three solid red dots.
+
+```{r}
+### again, missing the data set
+par(mfrow=c(1,3))
+boxplot(males$Height,females$Height, names=c("Males","Females"))
+plot(sort(males$Height),1:length(males$Height)/length(males$Height), 
+     par(new=TRUE)
+     plot(sort(females$Height),
+          1:length(females$Height[-1])/length(females$Height[-1]),
+          type="s",
+          xlab=c(""), 
+          ylab=c(""),
+          col="blue")
+legend("topleft",c("Male","Female"),fill=c("red","blue"))
+qqplot(males$Height,
+       females$Height, 
+       xlab="males height", 
+       ylab="females height")
+abline(a=0,b=1)
+q<-c(0.25,0.50,0.75)
+points(quantile(males$Height,q,na.rm=TRUE),
+       quantile(females$Height,q,na.rm=TRUE),
+       measures=paste0(c("Q1=(","M=(","Q3=("),
+                       quantile(males$Height,q,na.rm=TRUE),
+                       c(rep(",",3)),
+
+```
+
+# Two Quantitative Variables
+
+## Scatter plots
+
+-   A graph used to display data concerning 2 quantitative variables
+
+-   Can be used to explain the association between two vars, even in cases where there is not a clear relationship between variables.
+
+-   Correlation is a measure of the direction and strength of the relationship between 2 quantitative vars.
+
+-   Simple linear regression uses a var to predict a second one.
+
+#### Remarks
+
+In some studies 1 variable is used to explain or predict a 2nd var:
+
+-   Explanatory Variable or independent variable is used to explain variability in the 2nd var, aka response variable (x-axis)
+
+-   Response variable is the dependent variable (y-axis)
+
+#### Examining Scatter Plots
+
+1.  Direction: Positive or negative
+2.  Form: linear or non-linear
+3.  Strength: weak, moderate , strong
+4.  Bivariate outliers
+
+##### Linear Relationships
+
+Occurs when the "line of best fit" describing the relationship between variables is a straight line:
+
+-   Can be positive - both variables increase together -\> direct relationship
+
+-   Negative - 1 variable increases as another decreases -\> indirect relationship
+
+##### Bivariate Outlier
+
+Observations that do not fit with the general pattern of the observations
+
+```{r}
+# Data concerning baseball statistics and salaries from the 1991 and 1992 seasons is available at: http://www.amstat.org/publications/jse/datasets/baseball.dat.txt
+# The scatterplot below shows the relationship between salary and batting average for the 337 baseball players in this sample.
+
+baseball=read.table("../datasets/baseball.dat.txt") 
+plot(baseball[,c(1,2)], xlab="Salary", ylab="Batting average", main="Scatterplot of Batting average vs Salary")
+
+
+```
+
+From the example above:
+
+-   No clear meaningful relationship between salary and batting average
+
+-   More salaries at the low end than at the top end, without affecting the batting average
+
+```{r}
+# Data concerning the heights and shoe sizes of 408 students were retrieved from: http://www.amstat.org/publications/jse/v20n3/mclaren/shoesize.xls
+# The scatterplot below was constructed to show the relationship between height and shoe size.
+shoesize=readxl::read_xls("../datasets/shoesize.xls",sheet = 1)
+# showing the contents of the shoesize dataset
+str(shoesize)
+#
+shoesize=shoesize[,c(1,2,3,4)] 
+#transforming into a table
+shoesize
+# creting the scatter plot between height and Size
+plot(shoesize$Height,shoesize$Size, xlab="Height", ylab="Shoe size",main="Scatterplot of Shoe size vs Height")
+
+
+
+```
+
+In this case, we can assume:
+
+-   Linear Positive relationship between variables
+
+-   Magnitude of relationship is strong (subjective analysis)
+
+-   No outliers (subjective analysis)
+
+```{r}
+# Data concerning body measurements from 507 individuals retrieved from:
+# https://ww2.amstat.org/publications/jse/datasets/body.dat.txt
+# https://ww2.amstat.org/publications/jse/datasets/body.txt 
+
+body=read.table("../datasets/body.dat.txt",header=FALSE) 
+names(body)[c(23,24)]=c("Weight","Height")
+plot(body$Height,
+     body$Weight, 
+     xlab="Height (cm)", 
+     ylab="Weight (kg)", 
+     main="Scatterplot of Weight (kg) vs Height (cm)")
+
+```
+
+In the example above:
+
+-   Linear positive relationship
+
+-   Moderately strong relationship
+
+-   Some bivariate outliers
+
+```{r}
+# Data concerning sales at student-run coffee shop were retrieved from:
+# http://www.amstat.org/publications/jse/v19n1/cafedata.xls
+# http://www.amstat.org/publications/jse/v19n1/cafedata documentation.
+
+cafe = read_xls("../datasets/cafedata.xls")
+# describing the data set
+str(cafe)
+# plotting the scatter plot
+plot(cafe$Coffees,
+     cafe$`Max Daily Temperature (F)`,
+     xlab = "Coffes sold",
+     ylab = "Max Daily Temp",
+     main = "Relationship between daily temp and coffes sold")
+```
+
+From the example above we can tell:
+
+-   Linear negative relationship
+
+-   Moderately strong relation magnitude
+
+-   Appear to have no outliers
+
+## Correlations
+
+### Covariance
+
+linear relationship between a pair of quantitative measures x1, x,..., xn and y1, y2, ..., yn on the same sample of n individuals.
+
+cov(x,y) = s\^2(x,y) = 1/(n-1) Sum [variance(xi-mean(x))\*(yi-mean(y))]
+
+-   Positive covariance: x, y variables are more often obove or below the mean in tandem (the terms (xi-mean(x)) and (yi-mean(y)) are more likely to be positive)
+
+#### Remark
+
+covariance as a measure of association has the drawback that its value depends on the units of measurement. This shortcoming is remedied by using the correlation.
+
+### Correlation 
+
+A measure of the direction and strength of the relationship between two variables.
+
+We will be using the Pearson's correlation coefficient ("ρ") to measure the relationship between 2 vars.
+
+Properties of Person's ρ:
+
+1. 1 ≤ ρ ≤ +1.
+
+2. For a positive association, ρ \> 0, for a negative association ρ \< 0, if there is no relationship ρ = 0.
+
+3. The closer ρ is to 0 the weaker the relationship and the closer to +1 or -1 the stronger the relationship (e.g., ρ = 0.88 is a stronger relationship than ρ = +0.60).
+
+4. The sign of the correlation provides direction only.
+
+5. Correlation is unit free; the x and y variables do NOT need to be on the same scale (e.g., it is possible to compute the correlation between height in centimeters and weight in pounds)
+
+6. It does not matter which variable you label as x and which you label as y. The correlation between x and y is equal to the correlation between y and x.
+
+The following table may serve as a guideline when evaluating correlation coefficients:
+
+| Absolute Value of ρ | Strength of the Relationship |
+|---------------------|------------------------------|
+| 0-0.2               | Very weak                    |
+| 0.2-0.4             | Weak                         |
+| 0.4-0.6             | Moderate                     |
+| 0.6-0.8             | Strong                       |
+| 0.8-1.0             | Very strong                  |
+
+**NOTE:** This is just a guide. The analysis should take into account the data context, e.g. in social sciences studies we often get weaker correlation values.
+
+#### Remarks
+
+-   **IMPORTANT**: **Correlation does not mean Causation** -\> a strong relationship between x and y does not mean the x causes y. It is possible that y causes x , or that a confounding variable causes both x and y .
+
+-   Pearson's ρ should only be used when there is a linear relationship between x and y . A scatterplot should be constructed before computing Pearson's ρ to confirm that the relationship is not non-linear.
+
+-   **IMPORTANT:** Pearson's ρ is not resistant to outliers. Influential outliers are points in a data set that increase or decrease the correlation coefficient.
+
+Correlation in R:
+
+```{r}
+ # Loading the data 
+HW=c(16,20,19,19,16,15,20,20,19) 
+MT=c(15,19,13,14,18,14,20,20,18) 
+# Plotting 
+plot(HW, MT,
+     xlab="Homework average",
+     ylab="First midterm test", 
+     main="Scaterplot of Homework and Midterm grades", 
+     sub="Forecasting Methods, Spring 2017")
+```
+
+We can observe:
+
+-   There's a linear positve relationship
+
+-   Moderate magnitude
+
+-   Outliers exist
+
+Let's draw a line of best fit
+
+```{r}
+ # Loading the data 
+HW=c(16,20,19,19,16,15,20,20,19) 
+MT=c(15,19,13,14,18,14,20,20,18) 
+# Plotting 
+plot(HW, MT,
+     xlab="Homework average",
+     ylab="First midterm test", 
+     main="Scaterplot of Homework and Midterm grades", 
+     sub="Forecasting Methods, Spring 2017")
+abline(lm(MT~HW))
+```
+
+Now we calculate perason's ρ
+
+```{r}
+HW=c(16,20,19,19,16,15,20,20,19) 
+MT=c(15,19,13,14,18,14,20,20,18)
+cor(MT, HW)
+```
+
+It's a moderate relationship in terms of magnitude
+
+## Simple Linear Regression
+
+Use of one or more explanatory variables to predict a response variable
+
+By **LINEAR** we can assume:
+
+-   Uses a straight line to predict the response variable based on the explanatory var.
+
+By **SIMPLE** we can assume:
+
+-   Only one exploratory variable (If there are two or more explanatory variables, then multiple linear regression is necessary.)
+
+Additional remarks:
+
+-   In regression it **DOES MATTER** which variable is in the x-axis or y-axis:
+
+    -   X - Explanatory Variable
+
+    -   Y - Response Variable
+
+-   Both X and Y must be quantitative variables (recall y=b+mx, where m is the slope and b the interception point in the y-axis) -\> if x=0 then y=b.
+
+#### Remark
+
+-   Simple Linear Regression Line: Sample -\> y = a + bx
+
+-   Simple Linear Regression Line: Population -\> y = α + βx
+
+Additionally
+
+-   Simple linear regression uses data from a sample to construct the line of best fit.
+
+-   But what makes a line "best fit"?
+
+    -   The most common method of constructing a simple linear regression line, and the only method that we will be using in this course, is the least squares method.
+
+## Relations between multiple variables
+
+We can use Scatter plots to examine the relationship between 2 vars and 2 groups
+
+```{r}
+# getting the dataset
+body=read.table("../datasets/body.dat.txt",header=FALSE)
+str(body)
+# Setting the column names
+names(body)[c(23,24,25)]=c("Weight","Height","Gender") 
+# Converting the discrete values to Female, Male labels
+body$Gender<-factor(body$Gender, levels=c(0,1), labels=c("Female","Male"))
+body$Gender
+# creating the men and women groups
+men=subset(body, levels(body$Gender)=="Female")
+women=subset(body, levels(body$Gender)=="Male")
+# plotting the scatter plot
+plot(men$Height,men$Weight,
+     xlab="Height (cm)",
+     ylab="Weight (kg)",
+     main="Scatterplot of Weight (kg) vs Height (cm)",
+     col="red", 
+     pch=2)
+# adding the woman points for height and weight
+points(women$Height,women$Weight, col="blue", pch=3)
+legend("topright",
+       c('Male', 'Female'), 
+       col=c("red","blue"),
+       pch=c(2,3))
+
+```
+
+We can assume a linear positive and moderately strong relationship between weight and height.
+
+#### Remark
+
+There may exist confounding variables interfering with the results, and in this cases we may need to separate the variables in our analysis -\> e.g. the **Simpson's Paradox:**
+
+-   A trend exists in several different groups but disappears or reverses when these groups are combined:
+
+    -   Often occurs in medical or social science studies.
+
+    -   Can be resolved when casual relationships are addressed.
+
+## Time Series Plots
+
+A time series plot displays time on the x -axis and a quantitative response variable on the y -axis.
+
+-   In other words, one quantitative variable is examined over time.
+
+Before plotting the data is necessary to create a time series object containing the necessary meta information.
+
+```{r}
+# install.packages("pscl") 
+# library("pscl") 
+X <- tapply(prussian$y, prussian$year, sum) 
+names(X)=NULL 
+horse.deaths=ts(X, start=1875) 
+plot(horse.deaths, xlab="Year", 
+     ylab=expression(italic("deaths Per Year")),
+     ylim=c(0,20), 
+     main="Deaths by horsekick in\n Prussian cavalry corps, 1875-94")
+
+```
+
+Example: Changes in Religious Affiliations
+
+```{r}
+Christian = c(66.31,63.97,61.08,61.11,61.57,63.68,60.22,60.92,59.42,57.8,56.05,52.8,52.05,50.54, 51.77,55.18,54.18,53.99,50.14,52.79,53.55,48.05)
+
+Other = c(1.99,3.41,4.32,4.93,4.08,1.7,2.93,3.13,3.48,3.48, 3.39,3.79,4.39,2.98,3.23,4.66,4.00,4.17,5.99,3.33,6.19,5.60)
+
+None = c(31.28,32.2,34.29,33.95,34.32,34.41,36.34,35.08, 36.68,38.49,40.38,42.66,43.02,45.06,43.75,39.5, 41.22,41.11,43.04,43.4,39.63,45.77)
+
+Christian=ts(Christian, start=1983) 
+Other=ts(Other, start=1983) 
+None=ts(None, start=1983) 
+
+plot(Christian, ylab="%", ylim=c(0,70)) 
+lines(Other, col=2) 
+lines(None, col=3) 
+legend("topright",
+       c('Christian', 'Other non-Christian', 'No religion'),
+       col=c(1,2,3), 
+       lty=1)
+
+                    
 ```

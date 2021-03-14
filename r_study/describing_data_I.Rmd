@@ -1,0 +1,59 @@
+---
+title: "R Notebook - S4EA Decribing Data I"
+output:
+  html_document:
+    df_print: paged
+---
+
+## Tables in R sandbox
+
+```{r Tables & Graphs - 1 Cat Variable}
+Campus=c("Avenida de Berna", "Campo Santana", "Campus de Campolide", "Caparica", "Carcavelos")
+Students=c(5234,1234,2321,8646,3278) 
+table=table(Campus=Campus)
+table
+```
+
+Now adding the Students vector as new row
+
+```{r}
+Students[1:5]
+
+```
+
+```{r}
+table[5:2] #need to understand this tables thing better
+table[1:5]=Students
+table
+
+```
+
+### Barplot
+
+simple barplot example
+
+```{r Barplot}
+barplot(table)
+```
+
+### Pie chart
+
+Simple pie chart example
+
+```{r Pie chart}
+pie(table, main="Campus", sub="NOVA Fall undergraduates")
+
+```
+
+## Stacked bar chart
+
+Simple example
+
+```{r Graphs - 2 Cat variables}
+
+### Error, to check later
+barplot(table,
+        main="NOVA Fall 2017 Campus de Campolide enrollments", col=c(2,3), legend.text=TRUE, ylim=c(0,1700), beside=F)
+
+
+```

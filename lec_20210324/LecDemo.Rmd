@@ -1,0 +1,33 @@
+---
+title: "R Notebook - Lecture Demos"
+output: html_notebook
+---
+
+Proportion of female students - Step 1
+
+```{r}
+
+body=read.table("../datasets/body.dat.txt",header=FALSE)
+names(body)[c(23,24,25)]=c("Weight","Height","Gender")
+bodyM=subset(body,Gender==1, select=c(Weight,Height))
+dim(bodyM)
+
+```
+
+```{r}
+plot(bodyM$Height,bodyM$Weight, 
+     xlab="Height (cm)",
+     ylab="Weight (kg)",
+     main="Scatterplot of Weight (kg) vs Height (cm)")
+
+cor(bodyM$Height,bodyM$Weight)
+```
+
+```{r}
+# Lower limit
+cor(bodyM$Height,bodyM$Weight)-1.645*sd(corr)
+
+# Upper limit
+cor(bodyM$Height,bodyM$Weight)+1.645*sd(corr)
+
+```

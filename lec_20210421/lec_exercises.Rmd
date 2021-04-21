@@ -3,16 +3,127 @@ title: "LEc 20210421"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+# **Exercise 1 - Statistical inference I**
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+For each question, indicate whether it is best assessed by using a confidence interval, a hypothesis test, or whether statistical inference is not relevant to answer it. If inference is not relevant, explain why.
+
+1.  What percent of US voters support instituting a national kindergarten through 12th grade math curriculum?
+
+2.  Do basketball players hit a higher proportion of free throws when they are playing at home than when they are playing away?
+
+    **AW:** Hypothesis testing.
+
+3.  Do a majority of adults riding a bicycle wear a helmet?
+
+    **AW:**
+
+    -   Confidence interval.
+
+    -   Hypothesis test:
+
+        -   Null Hypothesis: 50% use helmet
+
+        -   Alternative hypothesis: More that 50 % uses helmet.
+
+4.  On average, were the 23 players on the 2010 Canadian Olympic hockey team older than the 23 players on the 2010 US Olympic hockey team?
+
+    **AW:**
+
+    -   No inference. We have all the data.
+
+5.  What proportion of people using a public restroom wash their hands after going to the bathroom?
+
+    **AW:**
+
+    -   Confidence interval
+
+6.  On average, how much more do adults who played sports in high school exercise than adults who did not play sports in high school?
+
+    **AW:**
+
+    -   Hypothesis test.
+
+    -   Confidence interval if you want to know how much more.
+
+7.  In 2010, what percent of the US Senate voted to confirm Elena Kagan as a member of the Supreme Court?
+
+    **AW:**
+
+    -   We have all the data. Proportion.
+
+8.  What is the average daily calorie intake of 20-year-old males?
+
+    **AW:**
+
+    -   Confidence Interval
 
 ```{r}
 plot(cars)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+# **Exercise 3 - Effect of Smoking on Pregnancy Rate**
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+Studies have concluded that smoking while pregnant can have negative consequences, but could smoking also negatively affect one's ability to become pregnant? A study collected data on 678 women who had gone off birth control with the intention of becoming pregnant. Smokers were defined as those who smoked at least one cigarette a day prior to pregnancy. We are interested in the pregnancy rate during the first cycle off birth control. The results are summarized in the following table:
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+    ##              Smoker     Non-smoker Sum       
+    ## Pregnant           38.0      206.0      244.0
+    ## Not pregnant       97.0      337.0      434.0
+    ## Sum               135.0      543.0      678.0
+
+We wish to estimate the difference in the proportion who successfully get pregnant, between smokers and non-smokers.
+
+1.  Find the best point estimate for the difference in proportions.
+
+    **AW:**
+
+    NOTE: As long as we have a big enough sample the best estimate is the difference in sample proportions
+
+    ```{r}
+    p_s <- 38/135
+    p_ns <- 206/543
+    result <- p_s - p_ns
+    result
+    ```
+
+2.  Use *R* or other technology to find and interpret a 90% confidence interval for the difference in proportions. Is it plausible that smoking has no effect on pregnancy rate?
+
+    NOTE: as we have 10 observations of each cases: pregnant smokers and non-smokers
+
+    ```{r}
+    prop.test(c(38,206), c(135,543), conf.level = 0.9)
+
+    ```
+
+    **AW:**
+
+    Yes, P-value is 0.04 which is lower than our alpha (1-0.9) so we reject our Null hypothesis which is: There's no effect of smoking in the possibility to get pregnant.
+
+Option 2: Bootstrapping:
+
+-   As we only have a contingency table
+
+    ```{r}
+    #smoker size
+    n_s = 135
+    #non-smoker size
+    n_ns = 543
+
+    s <- matrix(0, nrow=1, ncol=10000)
+    for (i in 1:10000) {
+      s[,i] = sum(rbinom(n_s,1,p_s))/n_s - sum(rbinom(n_ns, 1 , p_ns))/n_ns
+    }
+
+    hist(s)
+    ```
+
+# **Exercise 4 - Standard Error for Proportion of Hollywood Movies that are Action Movies**
+
+Previously the dataset *HollywoodMovies2011*, which contains information on all the 136 movies that came out of Hollywood in 2011. Thirty-two of the Hollywood movies that year were classified as action movies.
+
+1.  What proportion of Hollywood movies in 2011 were action movies? Use the correct notation with your answer.
+
+    **AW:**
+
+    -   
+
+2.  Use *R* to generate a sampling distribution for the proportion of action movies for sample proportions of size n=30n=30. Give the shape and center of the sampling distribution and give the standard error.

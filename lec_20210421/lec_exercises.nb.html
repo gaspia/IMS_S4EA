@@ -215,8 +215,50 @@ pre code {
 
 
 <!-- rnb-text-begin -->
-<p>This is an <a href="http://rmarkdown.rstudio.com">R Markdown</a> Notebook. When you execute code within the notebook, the results appear beneath the code.</p>
-<p>Try executing this chunk by clicking the <em>Run</em> button within the chunk or by placing your cursor inside it and pressing <em>Ctrl+Shift+Enter</em>.</p>
+<div id="exercise-1---statistical-inference-i" class="section level1">
+<h1><strong>Exercise 1 - Statistical inference I</strong></h1>
+<p>For each question, indicate whether it is best assessed by using a confidence interval, a hypothesis test, or whether statistical inference is not relevant to answer it. If inference is not relevant, explain why.</p>
+<ol style="list-style-type: decimal">
+<li><p>What percent of US voters support instituting a national kindergarten through 12th grade math curriculum?</p></li>
+<li><p>Do basketball players hit a higher proportion of free throws when they are playing at home than when they are playing away?</p>
+<p><strong>AW:</strong> Hypothesis testing.</p></li>
+<li><p>Do a majority of adults riding a bicycle wear a helmet?</p>
+<p><strong>AW:</strong></p>
+<ul>
+<li><p>Confidence interval.</p></li>
+<li><p>Hypothesis test:</p>
+<ul>
+<li><p>Null Hypothesis: 50% use helmet</p></li>
+<li><p>Alternative hypothesis: More that 50 % uses helmet.</p></li>
+</ul></li>
+</ul></li>
+<li><p>On average, were the 23 players on the 2010 Canadian Olympic hockey team older than the 23 players on the 2010 US Olympic hockey team?</p>
+<p><strong>AW:</strong></p>
+<ul>
+<li>No inference. We have all the data.</li>
+</ul></li>
+<li><p>What proportion of people using a public restroom wash their hands after going to the bathroom?</p>
+<p><strong>AW:</strong></p>
+<ul>
+<li>Confidence interval</li>
+</ul></li>
+<li><p>On average, how much more do adults who played sports in high school exercise than adults who did not play sports in high school?</p>
+<p><strong>AW:</strong></p>
+<ul>
+<li><p>Hypothesis test.</p></li>
+<li><p>Confidence interval if you want to know how much more.</p></li>
+</ul></li>
+<li><p>In 2010, what percent of the US Senate voted to confirm Elena Kagan as a member of the Supreme Court?</p>
+<p><strong>AW:</strong></p>
+<ul>
+<li>We have all the data. Proportion.</li>
+</ul></li>
+<li><p>What is the average daily calorie intake of 20-year-old males?</p>
+<p><strong>AW:</strong></p>
+<ul>
+<li>Confidence Interval</li>
+</ul></li>
+</ol>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdChjYXJzKVxuYGBgIn0= -->
@@ -224,12 +266,104 @@ pre code {
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the toolbar or by pressing <em>Ctrl+Alt+I</em>.</p>
-<p>When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the <em>Preview</em> button or press <em>Ctrl+Shift+K</em> to preview the HTML file).</p>
-<p>The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.</p>
+</div>
+<div id="exercise-3---effect-of-smoking-on-pregnancy-rate" class="section level1">
+<h1><strong>Exercise 3 - Effect of Smoking on Pregnancy Rate</strong></h1>
+<p>Studies have concluded that smoking while pregnant can have negative consequences, but could smoking also negatively affect one’s ability to become pregnant? A study collected data on 678 women who had gone off birth control with the intention of becoming pregnant. Smokers were defined as those who smoked at least one cigarette a day prior to pregnancy. We are interested in the pregnancy rate during the first cycle off birth control. The results are summarized in the following table:</p>
+<pre><code>##              Smoker     Non-smoker Sum       
+## Pregnant           38.0      206.0      244.0
+## Not pregnant       97.0      337.0      434.0
+## Sum               135.0      543.0      678.0</code></pre>
+<p>We wish to estimate the difference in the proportion who successfully get pregnant, between smokers and non-smokers.</p>
+<ol style="list-style-type: decimal">
+<li><p>Find the best point estimate for the difference in proportions.</p>
+<p><strong>AW:</strong></p>
+<p>NOTE: As long as we have a big enough sample the best estimate is the difference in sample proportions</p></li>
+</ol>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<pre><code>```r
+p_s &lt;- 38/135
+p_ns &lt;- 206/543
+result &lt;- p_s - p_ns
+result
+```</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjA5Nzg5MjM3XG4ifQ== -->
+<pre><code>```
+[1] -0.09789237
+```</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="2" style="list-style-type: decimal">
+<li><p>Use <em>R</em> or other technology to find and interpret a 90% confidence interval for the difference in proportions. Is it plausible that smoking has no effect on pregnancy rate?</p>
+<p>NOTE: as we have 10 observations of each cases: pregnant smokers and non-smokers</p></li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<pre><code>```r
+prop.test(c(38,206), c(135,543), conf.level = 0.9)
+```</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiXG5cdDItc2FtcGxlIHRlc3QgZm9yIGVxdWFsaXR5IG9mIHByb3BvcnRpb25zIHdpdGggY29udGludWl0eSBjb3JyZWN0aW9uXG5cbmRhdGE6ICBjKDM4LCAyMDYpIG91dCBvZiBjKDEzNSwgNTQzKVxuWC1zcXVhcmVkID0gNC4wODI3LCBkZiA9IDEsIHAtdmFsdWUgPSAwLjA0MzMyXG5hbHRlcm5hdGl2ZSBoeXBvdGhlc2lzOiB0d28uc2lkZWRcbjkwIHBlcmNlbnQgY29uZmlkZW5jZSBpbnRlcnZhbDpcbiAtMC4xNzQ4MTEwIC0wLjAyMDk3MzdcbnNhbXBsZSBlc3RpbWF0ZXM6XG4gICBwcm9wIDEgICAgcHJvcCAyIFxuMC4yODE0ODE1IDAuMzc5MzczOCBcbiJ9 -->
+<pre><code>```
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkxFYyAyMDIxMDQyMSINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNClRoaXMgaXMgYW4gW1IgTWFya2Rvd25dKGh0dHA6Ly9ybWFya2Rvd24ucnN0dWRpby5jb20pIE5vdGVib29rLiBXaGVuIHlvdSBleGVjdXRlIGNvZGUgd2l0aGluIHRoZSBub3RlYm9vaywgdGhlIHJlc3VsdHMgYXBwZWFyIGJlbmVhdGggdGhlIGNvZGUuIA0KDQpUcnkgZXhlY3V0aW5nIHRoaXMgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpSdW4qIGJ1dHRvbiB3aXRoaW4gdGhlIGNodW5rIG9yIGJ5IHBsYWNpbmcgeW91ciBjdXJzb3IgaW5zaWRlIGl0IGFuZCBwcmVzc2luZyAqQ3RybCtTaGlmdCtFbnRlciouIA0KDQpgYGB7cn0NCnBsb3QoY2FycykNCmBgYA0KDQpBZGQgYSBuZXcgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpJbnNlcnQgQ2h1bmsqIGJ1dHRvbiBvbiB0aGUgdG9vbGJhciBvciBieSBwcmVzc2luZyAqQ3RybCtBbHQrSSouDQoNCldoZW4geW91IHNhdmUgdGhlIG5vdGVib29rLCBhbiBIVE1MIGZpbGUgY29udGFpbmluZyB0aGUgY29kZSBhbmQgb3V0cHV0IHdpbGwgYmUgc2F2ZWQgYWxvbmdzaWRlIGl0IChjbGljayB0aGUgKlByZXZpZXcqIGJ1dHRvbiBvciBwcmVzcyAqQ3RybCtTaGlmdCtLKiB0byBwcmV2aWV3IHRoZSBIVE1MIGZpbGUpLg0KDQpUaGUgcHJldmlldyBzaG93cyB5b3UgYSByZW5kZXJlZCBIVE1MIGNvcHkgb2YgdGhlIGNvbnRlbnRzIG9mIHRoZSBlZGl0b3IuIENvbnNlcXVlbnRseSwgdW5saWtlICpLbml0KiwgKlByZXZpZXcqIGRvZXMgbm90IHJ1biBhbnkgUiBjb2RlIGNodW5rcy4gSW5zdGVhZCwgdGhlIG91dHB1dCBvZiB0aGUgY2h1bmsgd2hlbiBpdCB3YXMgbGFzdCBydW4gaW4gdGhlIGVkaXRvciBpcyBkaXNwbGF5ZWQuDQo=</div>
+    2-sample test for equality of proportions with continuity correction
+
+data:  c(38, 206) out of c(135, 543)
+X-squared = 4.0827, df = 1, p-value = 0.04332
+alternative hypothesis: two.sided
+90 percent confidence interval:
+ -0.1748110 -0.0209737
+sample estimates:
+   prop 1    prop 2 
+0.2814815 0.3793738 
+```</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<pre><code>**AW:**
+
+Yes, P-value is 0.04 which is lower than our alpha (1-0.9) so we reject our Null hypothesis which is: There&#39;s no effect of smoking in the possibility to get pregnant.</code></pre>
+<p>Option 2: Bootstrapping:</p>
+<ul>
+<li>As we only have a contingency table</li>
+</ul>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<pre><code>```r
+#smoker size
+n_s = 135
+#non-smoker size
+n_ns = 543
+
+s &lt;- matrix(0, nrow=1, ncol=10000)
+for (i in 1:10000) {
+  s[,i] = sum(rbinom(n_s,1,p_s))/n_s - sum(rbinom(n_ns, 1 , p_ns))/n_ns
+}
+
+hist(s)
+```</code></pre>
+<!-- rnb-plot-begin eyJoZWlnaHQiOjQwOC41MjksIndpZHRoIjo2NjEsInNpemVfYmVoYXZpb3IiOjAsImNvbmRpdGlvbnMiOltdfQ== -->
+<pre><code>&lt;img src=&quot;data:image/png;base64,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&quot; /&gt;</code></pre>
+<!-- rnb-plot-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="exercise-4---standard-error-for-proportion-of-hollywood-movies-that-are-action-movies" class="section level1">
+<h1><strong>Exercise 4 - Standard Error for Proportion of Hollywood Movies that are Action Movies</strong></h1>
+<p>Previously the dataset <em>HollywoodMovies2011</em>, which contains information on all the 136 movies that came out of Hollywood in 2011. Thirty-two of the Hollywood movies that year were classified as action movies.</p>
+<ol style="list-style-type: decimal">
+<li><p>What proportion of Hollywood movies in 2011 were action movies? Use the correct notation with your answer.</p>
+<p><strong>AW:</strong></p>
+<ul>
+<li></li>
+</ul></li>
+<li><p>Use <em>R</em> to generate a sampling distribution for the proportion of action movies for sample proportions of size n=30n=30. Give the shape and center of the sampling distribution and give the standard error.</p></li>
+</ol>
+<!-- rnb-text-end -->
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkxFYyAyMDIxMDQyMSINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCiMgKipFeGVyY2lzZSAxIC0gU3RhdGlzdGljYWwgaW5mZXJlbmNlIEkqKg0KDQpGb3IgZWFjaCBxdWVzdGlvbiwgaW5kaWNhdGUgd2hldGhlciBpdCBpcyBiZXN0IGFzc2Vzc2VkIGJ5IHVzaW5nIGEgY29uZmlkZW5jZSBpbnRlcnZhbCwgYSBoeXBvdGhlc2lzIHRlc3QsIG9yIHdoZXRoZXIgc3RhdGlzdGljYWwgaW5mZXJlbmNlIGlzIG5vdCByZWxldmFudCB0byBhbnN3ZXIgaXQuIElmIGluZmVyZW5jZSBpcyBub3QgcmVsZXZhbnQsIGV4cGxhaW4gd2h5Lg0KDQoxLiAgV2hhdCBwZXJjZW50IG9mIFVTIHZvdGVycyBzdXBwb3J0IGluc3RpdHV0aW5nIGEgbmF0aW9uYWwga2luZGVyZ2FydGVuIHRocm91Z2ggMTJ0aCBncmFkZSBtYXRoIGN1cnJpY3VsdW0/DQoNCjIuICBEbyBiYXNrZXRiYWxsIHBsYXllcnMgaGl0IGEgaGlnaGVyIHByb3BvcnRpb24gb2YgZnJlZSB0aHJvd3Mgd2hlbiB0aGV5IGFyZSBwbGF5aW5nIGF0IGhvbWUgdGhhbiB3aGVuIHRoZXkgYXJlIHBsYXlpbmcgYXdheT8NCg0KICAgICoqQVc6KiogSHlwb3RoZXNpcyB0ZXN0aW5nLg0KDQozLiAgRG8gYSBtYWpvcml0eSBvZiBhZHVsdHMgcmlkaW5nIGEgYmljeWNsZSB3ZWFyIGEgaGVsbWV0Pw0KDQogICAgKipBVzoqKg0KDQogICAgLSAgIENvbmZpZGVuY2UgaW50ZXJ2YWwuDQoNCiAgICAtICAgSHlwb3RoZXNpcyB0ZXN0Og0KDQogICAgICAgIC0gICBOdWxsIEh5cG90aGVzaXM6IDUwJSB1c2UgaGVsbWV0DQoNCiAgICAgICAgLSAgIEFsdGVybmF0aXZlIGh5cG90aGVzaXM6IE1vcmUgdGhhdCA1MCAlIHVzZXMgaGVsbWV0Lg0KDQo0LiAgT24gYXZlcmFnZSwgd2VyZSB0aGUgMjMgcGxheWVycyBvbiB0aGUgMjAxMCBDYW5hZGlhbiBPbHltcGljIGhvY2tleSB0ZWFtIG9sZGVyIHRoYW4gdGhlIDIzIHBsYXllcnMgb24gdGhlIDIwMTAgVVMgT2x5bXBpYyBob2NrZXkgdGVhbT8NCg0KICAgICoqQVc6KioNCg0KICAgIC0gICBObyBpbmZlcmVuY2UuIFdlIGhhdmUgYWxsIHRoZSBkYXRhLg0KDQo1LiAgV2hhdCBwcm9wb3J0aW9uIG9mIHBlb3BsZSB1c2luZyBhIHB1YmxpYyByZXN0cm9vbSB3YXNoIHRoZWlyIGhhbmRzIGFmdGVyIGdvaW5nIHRvIHRoZSBiYXRocm9vbT8NCg0KICAgICoqQVc6KioNCg0KICAgIC0gICBDb25maWRlbmNlIGludGVydmFsDQoNCjYuICBPbiBhdmVyYWdlLCBob3cgbXVjaCBtb3JlIGRvIGFkdWx0cyB3aG8gcGxheWVkIHNwb3J0cyBpbiBoaWdoIHNjaG9vbCBleGVyY2lzZSB0aGFuIGFkdWx0cyB3aG8gZGlkIG5vdCBwbGF5IHNwb3J0cyBpbiBoaWdoIHNjaG9vbD8NCg0KICAgICoqQVc6KioNCg0KICAgIC0gICBIeXBvdGhlc2lzIHRlc3QuDQoNCiAgICAtICAgQ29uZmlkZW5jZSBpbnRlcnZhbCBpZiB5b3Ugd2FudCB0byBrbm93IGhvdyBtdWNoIG1vcmUuDQoNCjcuICBJbiAyMDEwLCB3aGF0IHBlcmNlbnQgb2YgdGhlIFVTIFNlbmF0ZSB2b3RlZCB0byBjb25maXJtIEVsZW5hIEthZ2FuIGFzIGEgbWVtYmVyIG9mIHRoZSBTdXByZW1lIENvdXJ0Pw0KDQogICAgKipBVzoqKg0KDQogICAgLSAgIFdlIGhhdmUgYWxsIHRoZSBkYXRhLiBQcm9wb3J0aW9uLg0KDQo4LiAgV2hhdCBpcyB0aGUgYXZlcmFnZSBkYWlseSBjYWxvcmllIGludGFrZSBvZiAyMC15ZWFyLW9sZCBtYWxlcz8NCg0KICAgICoqQVc6KioNCg0KICAgIC0gICBDb25maWRlbmNlIEludGVydmFsDQoNCmBgYHtyfQ0KcGxvdChjYXJzKQ0KYGBgDQoNCiMgKipFeGVyY2lzZSAzIC0gRWZmZWN0IG9mIFNtb2tpbmcgb24gUHJlZ25hbmN5IFJhdGUqKg0KDQpTdHVkaWVzIGhhdmUgY29uY2x1ZGVkIHRoYXQgc21va2luZyB3aGlsZSBwcmVnbmFudCBjYW4gaGF2ZSBuZWdhdGl2ZSBjb25zZXF1ZW5jZXMsIGJ1dCBjb3VsZCBzbW9raW5nIGFsc28gbmVnYXRpdmVseSBhZmZlY3Qgb25lJ3MgYWJpbGl0eSB0byBiZWNvbWUgcHJlZ25hbnQ/IEEgc3R1ZHkgY29sbGVjdGVkIGRhdGEgb24gNjc4IHdvbWVuIHdobyBoYWQgZ29uZSBvZmYgYmlydGggY29udHJvbCB3aXRoIHRoZSBpbnRlbnRpb24gb2YgYmVjb21pbmcgcHJlZ25hbnQuIFNtb2tlcnMgd2VyZSBkZWZpbmVkIGFzIHRob3NlIHdobyBzbW9rZWQgYXQgbGVhc3Qgb25lIGNpZ2FyZXR0ZSBhIGRheSBwcmlvciB0byBwcmVnbmFuY3kuIFdlIGFyZSBpbnRlcmVzdGVkIGluIHRoZSBwcmVnbmFuY3kgcmF0ZSBkdXJpbmcgdGhlIGZpcnN0IGN5Y2xlIG9mZiBiaXJ0aCBjb250cm9sLiBUaGUgcmVzdWx0cyBhcmUgc3VtbWFyaXplZCBpbiB0aGUgZm9sbG93aW5nIHRhYmxlOg0KDQogICAgIyMgICAgICAgICAgICAgIFNtb2tlciAgICAgTm9uLXNtb2tlciBTdW0gICAgICAgDQogICAgIyMgUHJlZ25hbnQgICAgICAgICAgIDM4LjAgICAgICAyMDYuMCAgICAgIDI0NC4wDQogICAgIyMgTm90IHByZWduYW50ICAgICAgIDk3LjAgICAgICAzMzcuMCAgICAgIDQzNC4wDQogICAgIyMgU3VtICAgICAgICAgICAgICAgMTM1LjAgICAgICA1NDMuMCAgICAgIDY3OC4wDQoNCldlIHdpc2ggdG8gZXN0aW1hdGUgdGhlIGRpZmZlcmVuY2UgaW4gdGhlIHByb3BvcnRpb24gd2hvIHN1Y2Nlc3NmdWxseSBnZXQgcHJlZ25hbnQsIGJldHdlZW4gc21va2VycyBhbmQgbm9uLXNtb2tlcnMuDQoNCjEuICBGaW5kIHRoZSBiZXN0IHBvaW50IGVzdGltYXRlIGZvciB0aGUgZGlmZmVyZW5jZSBpbiBwcm9wb3J0aW9ucy4NCg0KICAgICoqQVc6KioNCg0KICAgIE5PVEU6IEFzIGxvbmcgYXMgd2UgaGF2ZSBhIGJpZyBlbm91Z2ggc2FtcGxlIHRoZSBiZXN0IGVzdGltYXRlIGlzIHRoZSBkaWZmZXJlbmNlIGluIHNhbXBsZSBwcm9wb3J0aW9ucw0KDQogICAgYGBge3J9DQogICAgcF9zIDwtIDM4LzEzNQ0KICAgIHBfbnMgPC0gMjA2LzU0Mw0KICAgIHJlc3VsdCA8LSBwX3MgLSBwX25zDQogICAgcmVzdWx0DQogICAgYGBgDQoNCjIuICBVc2UgKlIqIG9yIG90aGVyIHRlY2hub2xvZ3kgdG8gZmluZCBhbmQgaW50ZXJwcmV0IGEgOTAlIGNvbmZpZGVuY2UgaW50ZXJ2YWwgZm9yIHRoZSBkaWZmZXJlbmNlIGluIHByb3BvcnRpb25zLiBJcyBpdCBwbGF1c2libGUgdGhhdCBzbW9raW5nIGhhcyBubyBlZmZlY3Qgb24gcHJlZ25hbmN5IHJhdGU/DQoNCiAgICBOT1RFOiBhcyB3ZSBoYXZlIDEwIG9ic2VydmF0aW9ucyBvZiBlYWNoIGNhc2VzOiBwcmVnbmFudCBzbW9rZXJzIGFuZCBub24tc21va2Vycw0KDQogICAgYGBge3J9DQogICAgcHJvcC50ZXN0KGMoMzgsMjA2KSwgYygxMzUsNTQzKSwgY29uZi5sZXZlbCA9IDAuOSkNCg0KICAgIGBgYA0KDQogICAgKipBVzoqKg0KDQogICAgWWVzLCBQLXZhbHVlIGlzIDAuMDQgd2hpY2ggaXMgbG93ZXIgdGhhbiBvdXIgYWxwaGEgKDEtMC45KSBzbyB3ZSByZWplY3Qgb3VyIE51bGwgaHlwb3RoZXNpcyB3aGljaCBpczogVGhlcmUncyBubyBlZmZlY3Qgb2Ygc21va2luZyBpbiB0aGUgcG9zc2liaWxpdHkgdG8gZ2V0IHByZWduYW50Lg0KDQpPcHRpb24gMjogQm9vdHN0cmFwcGluZzoNCg0KLSAgIEFzIHdlIG9ubHkgaGF2ZSBhIGNvbnRpbmdlbmN5IHRhYmxlDQoNCiAgICBgYGB7cn0NCiAgICAjc21va2VyIHNpemUNCiAgICBuX3MgPSAxMzUNCiAgICAjbm9uLXNtb2tlciBzaXplDQogICAgbl9ucyA9IDU0Mw0KDQogICAgcyA8LSBtYXRyaXgoMCwgbnJvdz0xLCBuY29sPTEwMDAwKQ0KICAgIGZvciAoaSBpbiAxOjEwMDAwKSB7DQogICAgICBzWyxpXSA9IHN1bShyYmlub20obl9zLDEscF9zKSkvbl9zIC0gc3VtKHJiaW5vbShuX25zLCAxICwgcF9ucykpL25fbnMNCiAgICB9DQoNCiAgICBoaXN0KHMpDQogICAgYGBgDQoNCiMgKipFeGVyY2lzZSA0IC0gU3RhbmRhcmQgRXJyb3IgZm9yIFByb3BvcnRpb24gb2YgSG9sbHl3b29kIE1vdmllcyB0aGF0IGFyZSBBY3Rpb24gTW92aWVzKioNCg0KUHJldmlvdXNseSB0aGUgZGF0YXNldCAqSG9sbHl3b29kTW92aWVzMjAxMSosIHdoaWNoIGNvbnRhaW5zIGluZm9ybWF0aW9uIG9uIGFsbCB0aGUgMTM2IG1vdmllcyB0aGF0IGNhbWUgb3V0IG9mIEhvbGx5d29vZCBpbiAyMDExLiBUaGlydHktdHdvIG9mIHRoZSBIb2xseXdvb2QgbW92aWVzIHRoYXQgeWVhciB3ZXJlIGNsYXNzaWZpZWQgYXMgYWN0aW9uIG1vdmllcy4NCg0KMS4gIFdoYXQgcHJvcG9ydGlvbiBvZiBIb2xseXdvb2QgbW92aWVzIGluIDIwMTEgd2VyZSBhY3Rpb24gbW92aWVzPyBVc2UgdGhlIGNvcnJlY3Qgbm90YXRpb24gd2l0aCB5b3VyIGFuc3dlci4NCg0KICAgICoqQVc6KioNCg0KICAgIC0gICANCg0KMi4gIFVzZSAqUiogdG8gZ2VuZXJhdGUgYSBzYW1wbGluZyBkaXN0cmlidXRpb24gZm9yIHRoZSBwcm9wb3J0aW9uIG9mIGFjdGlvbiBtb3ZpZXMgZm9yIHNhbXBsZSBwcm9wb3J0aW9ucyBvZiBzaXplIG49MzBuPTMwLiBHaXZlIHRoZSBzaGFwZSBhbmQgY2VudGVyIG9mIHRoZSBzYW1wbGluZyBkaXN0cmlidXRpb24gYW5kIGdpdmUgdGhlIHN0YW5kYXJkIGVycm9yLg0K</div>
 
 
 

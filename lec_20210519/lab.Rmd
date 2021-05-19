@@ -1,0 +1,136 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  mlibraryarkdown: 
+    wrap: 72
+---
+
+# Exercise 1
+
+This problem is adapted from one in McClave et al. (2005) [McClave, J. T., Benson, P. G., and Sincich, T. Prentice Hall, Upper Saddle River, NJ, 9th edition, 2005.]. The data file NYJUICE contains data on demand for cases of 96-ounce containers of chilled orange juice over 40 sale days at a warehouse in New York City that has been experiencing a large number of out-of-stock situations. To better understand demand for this product, the company wishes to model the number of cases of orange juice, Cases, as a function of sale day, Day.
+
+Construct a scatterplot for these data, and add a quadratic regression line to your scatterplot.
+
+Fit a simple linear regression model to these data, that is, use statistical software to fit the model with as the single predictor and write out the resulting fitted regression equation.
+
+Fit a quadratic model to these data, that is, use statistical software to fit the model with both as predictors and write out the resulting fitted regression equation. You will first need to create the term in the dataset.
+
+Based on the scatterplot in part 1., it appears that a quadratic model would better explain variation in orange juice demand than a simple linear regression model. To show this formally, do a hypothesis test to assess whether the term is statistically significant in the quadratic model (at a 5% significance level). If it is, the more complicated quadratic model is justified. If not, the simpler simple linear regression model would be preferred.
+
+```{r}
+plot(cars)
+```
+
+# Exercise 2
+
+Fit a simple linear regression model to data for 212 countries (INTERNET data file) with response (percentage of the population that are Internet users) and predictor (GDP per capita in US\$ thousands). This model is a reasonable one, but it is possible to improve it by transforming both the response and predictor variables. Investigate the use of transformations for this application using the data in the data file. In particular, investigate natural logarithm and square root transformations for both the response and predictor variables. Which transformations seem to provide the most useful model for understanding any association between Int and Gdp. Compare and contrast the different models that you fit. Include a few paragraphs describing your conclusions with respect to the various ways of comparing models and perhaps some scatterplots.
+
+Hint: Compare the following three models: (1) response Int and predictor Gdp ; (2) response loge(Int) and predictor loge(Gdp) ; (3) response Int‾‾‾√ and predictor Gdp‾‾‾‾√ . Use the three usual methods to guide your comparison.
+
+```{r}
+internet <- table(read.excel('/Users/gaspia/source/ims/IMS_S4EA/lec_20210519/homes5.csv'))
+head(internet)
+```
+
+# Exercise 3
+
+This problem extends the home prices example used in classes (HOMES6 data file). We wish to model the association between the price of a single-family home (Price in \$ thousands) and the following predictors:
+
+Floor = Floor size (thousands of square feet) Lot = Lot size category Bath = number of bathrooms (with half-bathrooms counting as "0.1") Bed = number of bedrooms (between 2 and 6) Age = age (standardized: (year built---1970)/10) Gar = garage size (0,1,2, or 3 cars) DAc = indicator for "active listing" (rather than pending or sold) DEd = indicator for proximity to Edison Elementary DHa = indicator for proximity to Harris Elementary
+
+Consider the following model, which includes an interaction between Bath and Bed: E(Price)=b0+b1Floor+b2Lot+b3Bath+b4Bed+b5BathBed+b6Age+b7Age2+b8Gar+b9DAc+b10DEd+b11DHa.
+
+The regression results for this model are:
+
+```{r}
+plot(cars)
+```
+
+Test whether the linear association between home price (Price) and number of bathrooms (Bath) depends on number of bedrooms all else equal (use significance level 5%).
+
+How does the linear association between Price and Bath vary with Bed? We can investigate this by isolating the part of the model involving just Bath: The \`\`Bath effect" on Price is given by b3Bath+b5BathBed=(b3+b5Bed)Bath . For example, when Bed=2 , this effect is estimated to be (−98.15+30.39(2))Bath=−37.37Bath . Thus, for two-bedroom homes, there is a negative linear association between home price and number of bathrooms (for each additional bathroom, the sale price drops by \$37,370, all else being equal - perhaps adding extra bathrooms to two-bedroom homes is considered a waste of space and so has a negative impact on price). Use similar calculations to show the linear association between and for three-bedroom homes, and also for four-bedroom homes.
+
+```{r}
+plot(cars)
+```
+
+# Exercise 4
+
+Consider the data available in the HOMES5 data file---these data are for 40 singlefamily homes in south Eugene, Oregon in 2005 and were provided by Victoria Whitman, a realtor in Eugene. For the sake of illustration, here we investigate whether any linear association between Floor (floor size in thousands of square feet) and Price (sale price in thousands of dollars) differs for two particular neighborhoods (defined by closest elementary school) in this housing market --- we ignore the other predictors (lot size, age, etc.) for now.
+
+In the data file there are 26 homes whose closest elementary school is "Redwood" (DHa=0 ) and 14 homes whose closest elementary school is "Harris" (DHa=1 ).
+
+Write the equation of a model relating sale price (Price ) to floor size (Floor ) and neighborhood (DHa ) that allows for different slopes and intercepts for each neighborhood.
+
+Draw a scatterplot that illustrates the model in part 1. Include two regression lines, one for each neighborhood, on your plot.
+
+Use statistical software to fit the model from part 1. to the data and write out the resulting estimated regression equation. You will first need to create the interaction term in the dataset.
+
+Conduct a hypothesis test to determine whether the slopes associated with the two neighborhoods are significantly different. Use significance level 5%.
+
+Based on the results from part 4., fit a new model to the data, and write two separate equations (with actual numbers) for predicting Price from Floor one for the Redwood neighborhood and the other for the Harris neighborhood.
+
+```{r}
+plot(cars)
+```
+
+# Exercise 6
+
+The BEVERAGE data file (kindly provided by Dr. Wolfgang Jank at the University of Maryland) contains the following quarterly data on sales of a popular soft drink for the period 1986-1998:
+
+Sales = quarterly sales (U.S \$ million)
+
+Time = time period (consecutive numbers from 1 to 52)
+
+D1 = indicator variable for quarter 1
+
+D2 = indicator variable for quarter 2
+
+D3 = indicator variable for quarter 3
+
+The reference level for the indicator variables is quarter 4.
+
+Draw a scatterplot of Sales on the vertical axis versus Time on the horizontal axis and connect the points on the plot with lines. Based on the plot, why would it be inappropriate to fit a simple linear regression model with Sales as the response variable and Time as the predictor variable?
+
+One way to take into account the seasonality of these data is to fit a multiple linear regression model with Sales as the response variable and (D1, D2, D3, Time) as the predictor variables. Fit this model and draw a scatterplot of the studentized residuals from the model on the vertical axis versus Time on the horizontal axis. Based on the plot, why is this model also inappropriate?
+
+One possible remedy for models with excessive autocorrelation is to try adding the lag-1 response variable as a predictor variable. Create the lag-1 response variable, LagSales . Next remove the first observation of each variable (since there is no value of LagSales when Time=1). Then fit a multiple linear regression model with sales as the response variable and (D1, D2, D3 and LagSales) as the predictor variables. Draw a scatterplot of the studentized residuals from this model on the vertical axis versus Time on the horizontal axis. Comparing this plot with the residual plot from part 2. , does including appear to correct any autocorrelation problems?
+
+Use a simple linear regression model with Sales as the response variable and Time as the predictor variable to predict for the four quarters in 1999. Calculate the prediction errors if Sales for the four quarters in 1999 were actually 4,428, 5,379, 5,195, and 4,803, respectively. Also calculate the prediction errors for the models you fit in parts 2. and 3. Which model provides the best predictions overall?
+
+```{r}
+beverage = read.table('./beverage.csv', header = TRUE, sep=',')
+ggplot(data = beverage, aes(Time, Sales)) + geom_line()
+```
+
+˚
+
+```{r}
+model_2 <- lm(Sales ~ Time + D1 + D2 + D3, data = beverage)
+summary(model_2)
+```
+
+We can reject the Null hypothesis that the coefficient is 0 because our p-value is higher than 0,5.
+
+```{r}
+plot(model_2)
+```
+
+```{r}
+stres = rstudent(model_2)
+plot(beverage$Time, stres,
+     ylab='Studentized residuals',
+     xlab='Time')
+```
+
+Auto-correlated residuals.
+
+```{r}
+beverage <- beverage %>% mutate (lag = lag(Sales)) %>% filter(!is.na(lag))
+p
+```
+
+```{r}
+model_1 <- 
+```

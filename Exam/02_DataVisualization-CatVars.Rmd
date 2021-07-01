@@ -1,0 +1,33 @@
+---
+title: "Data Visualiation - Categorical Variable"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+Campus=c("Avenida de Berna", "Campo Santana", "Campus de Campolide", "Caparica", "Carcavelos")
+Students=c(5234,1234,2321,8646,3278) 
+table=table(Campus=Campus) 
+table[1:5]=Students 
+table
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+```{r}
+pie(table, main="Pie chart of Campi", sub="NOVA Fall 2017 Undergraduate Enrollments")
+
+```
+
+```{r}
+barplot(table, main="Barplot of Campi", col="yellow", sub="NOVA Fall 2017 Undergraduate Enrollments",las=0, cex.sub=0.7,cex.lab=0.3)
+
+```
+```{r}
+ barplot(dt, main="NOVA Fall 2017 Campus de Campolide enrollments", col=c(2,3), legend.text=TRUE, ylim=c(0,1700))
+
+```

@@ -1,0 +1,305 @@
+---
+title: "05 Eercises"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.
+
+# **Exercise 1 - Diet and Retinol and Beta-Carotene Levels**
+
+The data from a study (Nierenberg, D., et. al., *Determinants of plasma levels of beta-carotene and retinol*, American Journal of Epidemiology, 1989 Sep; 130(3): 511--21. ) examining the association between diet and plasma retinol and plasma beta-carotene levels are given in *NutritionStudy*. The dataset has 315 cases (people who have the measurements taken) and 16 columns. Dataset description is in the Appendix.
+
+1.  Indicate which of the variables are quantitative and which are categorical.
+
+    1.  Categorical: ID, Smoke, Vitamin, Gender, VitaminUse, PriorSmoke.
+
+    2.  Quantitative: All others
+
+2.  Discuss one possible relationship of interest in this dataset between two categorical variables. Between two quantitative variables. Between one categorical and one quantitative variable.
+
+    1.  Two categorical: Gender and Smoke
+
+    2.  Two quantitative: RetinolDiet and RetinolPlasma & BetaDiet and BetaPlasma
+
+    3.  One categorical and one quantitative: Gender and Quetelet.
+
+3.  Which visual tool would you use to evaluate the association mentioned above?
+
+    1.  A scatter plot between RetinolDiet and RetinolPlasma and a scatter plot between BetaDiet and BetaPlasma\
+
+```{r}
+plasma = read_xlsx("datasets/PlasmaRetinol.xlsx", sheet = 1 )
+plasma
+```
+
+```{r}
+cor(plasma$SEX, plasma$SMOKSTAT, method = "pearson")
+plot(t(as.matrix(plasma[plasma$RETDIET, plasma$RETPLASMA])), xlab="Retinol Diet", ylab="Retinol Plasma", main="Retinol Diet vs Retinol Diet")
+# we have nulls
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+# **Exercise 2 - First Quiz Easy or Hard?**
+
+In an introductory statistics class in which regular quizzes are given, should the first quiz be easy (to give students confidence) or hard (to convince students to work harder)? The response variable will be grades on a later exam that is common to all students.
+
+1.  Describe an observational study to answer this question.
+
+    Apply one easy first quiz and one difficult first quiz in two consecutive years and compare results.
+
+2.  Describe a confounding variable that is likely to impact the results of the observational study.
+
+    The level of prior statistics knowledge students have
+
+3.  Describe a randomized experiment designed to answer this question.
+
+    Randomly chose 50% of the students and give them an easy first test and give a difficult first test to the remaining 50% of students and measure the result.
+
+4.  Assume the option 1 (observational study) was chosen. The results achieved in the exam are the following (scores from 0 to 20): mean 18 in year one and mean 12 in year two. What can you conclude about the type of quiz used?
+
+Nothing, given that the students from year one can be different from year two.
+
+# **Exercise 3 - What Type of Cell Phone?**
+
+A 2012 survey ( *Nearly Half of American Adults are Smartphone Owners*, Pew Research Center, pewresearch.org, March 1, 2012.) examined cell phone ownership by US adults. The results of the survey are shown in the following table:
+
+| Var1                      | Freq |
+|---------------------------|------|
+| Android smartphone        | 458  |
+| iPhone smartphone         | 437  |
+| Blackberry smartphone     | 141  |
+| Cell phone not smartphone | 924  |
+| no cell phone             | 293  |
+| Total                     | 2253 |
+
+1.  Make a relative frequency table of the data. Give results to three decimal places.
+
+```{r}
+prop.table(3)
+round(prop.table(tabex6), digits = 3)
+```
+
+2.  What percent of the survey respondents do not own a cell phone?
+
+```{r}
+prop = 293/2253
+prop
+```
+
+# **Exercise 4 - Smoking and Pregnancy Rate**
+
+Studies have concluded that smoking while pregnant can have negative consequences, but could smoking also negatively affect one's ability to become pregnant? A study collected data on 678 women who had gone off birth control with the intention of becoming pregnant.(Baird,D. and Wilcox, A., *Cigarette Smoking Associated With Delayed Conception*, Journal of the American Medical Association, June 2011; 305(23): 2379--2484.) Smokers were defined as those who smoked at least one cigarette a day prior to pregnancy. We are interested in the pregnancy rate during the first cycle off birth control. The results are summarized in the following table:
+
+|              | Smoker | Non-smoker | Total |
+|--------------|--------|------------|-------|
+| Pregnant     | 38     | 206        | 244   |
+| Not pregnant | 97     | 337        | 434   |
+| Total        | 135    | 543        | 678   |
+
+1.  Is this an experiment or an observational study? Can we use the data to determine whether smoking influences one's ability to get pregnant? Why or why not?
+
+    Observational.
+
+    No. There may be other confounding variables and The research did not manipulate the treatment (smoking or not).
+
+2.  What is the population of interest?
+
+    Women who had gone off birth control with the intention of becoming pregnant.
+
+3.  What is the proportion of women successfully pregnant after their first cycle (p̂)? Proportion of smokers successful (p̂s)? Proportion of nonsmokers successful (p̂ns)?
+
+    ```{r}
+    #phat
+    244/678
+    #phat(s)
+    38/135
+    #phat(sn)
+    208/543
+
+
+    ```
+
+4.  Find and interpret (p̂ns−p̂s) the difference in proportion of success between non-smokers and smokers. Is that difference statistically significant, for a confidence level of 95%?
+
+    ```{r}
+    prop.test(x = c(38, 206), n = c(135, 543))
+    ```
+
+# **Exercise 5 - Lie Detection, Is lie detection software accurate?**
+
+A recent study was conducted in order to test the accuracy of a commonly used method of lie detection (Hollien, H., Harnsberger, J., Martin, C., and Hollien, K., *Evaluation of the NITV CVSA*, Journal of Forensic Sciences, January 2010; 53(1):183--193). The researchers are specifically interested in how lie detectors perform when an individual is stressed. A sample of 48 participants were gathered and attached to the lie detection device. They were asked to read deceptive (lying) material out loud while receiving an electric shock (to add stress). The lie detector failed to report deception in 17 of the 48 participants.
+
+1.  What is the sample in this study? What is the population of interest? What does the variable measure?
+
+    1.  Sample: 48
+
+    2.  Population: All lie detector stressed individuals
+
+    3.  How many times lies are detected
+
+2.  What proportion of time does the lie detector fail to report deception?
+
+    1.  17/48 = 35%
+
+3.  If you were a prosecutor, would you recommend this lie detector to reveal deception?
+
+    The detection of lies is higher than random (50%), is 65%, so, yes. I would. However, is not clear if the individuals knew the material was deceiving...
+
+# **Exercise 9 - Birth Rate**
+
+Is the birth rate different in developed and undeveloped countries? In the dataset *AllCountries* (see description in Appendix), we have information on the birth rate of all 217 countries as well as an indicator for whether the country is considered a developed or undeveloped nation *(Remark: In this exercise nations are considered undeveloped if the average electricity used per person is less then 2500 kWh a year (coded with 1 in the Developed variable of AllCountries). We should combined the other two categories into a single category. Missing should be removed data.)*
+
+Use the five number summaries for each group of countries in the following table to answer the following questions.
+
+|             | Min. | 1st Qu. | Median | Mean     | 3rd Qu. | Max. | NA's |
+|-------------|------|---------|--------|----------|---------|------|------|
+| Developed   | 10.1 | 18.55   | 22.95  | 24.62353 | 31.55   | 47.8 | 75   |
+| Undeveloped | 7.0  | 9.70    | 10.70  | 12.18630 | 13.90   | 24.6 | 76   |
+
+1.  Does the birth rate distribution appear to be different in developed and undeveloped countries?
+
+    It looks very different, but... the max of undeveloped is bigger than the min of developed, so there is some overlap...
+
+2.  Would any of the undeveloped countries be outliers if they were considered developed? What about developed countries if they were considered undeveloped?
+
+Developed IQR = 31.55 - 18.55 = 13 \* 1.5 = 19.5 Low outlier \< 18.55 - 19.5 \< -0.95 Upper outlier \> 31.55 + 19.5 \> 51.05
+
+Undeveloped IQR = 13.9 - 9.7 = 4.2 \* 1.5 = 6.3 Low outlier \< 9.7 - 6.3 \< 3.4 Higher undeveloped \> 13.9 + 6.3 \> 20.2
+
+The minimum of the undeveloped is 7, way above -0.95. So, undeveloped would not be outliers if they were considered developed. The undeveloped outliers are above 20.2, and more than 50% of the developed countries are above that value, so they would be outliers.
+
+3.  Libya is on the border between being considered developed or undeveloped. The birth rate in Libya is 19.10. Is this an outlier for undeveloped countries? Is it an outlier for developed countries?
+
+No. 19.10 is below both (dev & undev) upper outlier fence and above both (dev & undev) low outlier fence.
+
+# **Exercise 11 - Daily Calorie Consumption**
+
+*NutritionStudy* contains variables and concentrations of micronutrients in the blood for a sample of n=315 individuals.
+
+```{r}
+nut = read_excel("datasets/NutritionStudy.xlsx")
+nut
+```
+
+1.  Find the five number summary for daily calorie consumption.
+
+    ```{r}
+    fivenum(nut$Calories)
+    ```
+
+2.  The ten largest data values are given below. Which (if any) of these is an outlier?
+
+```{r}
+IQR = (quantile(nut$Calories, 0.75)-quantile(nut$Calories, 0.25))*1.5
+out_upper = (quantile(nut$Calories, 0.75)) + IQR
+out_lower = (quantile(nut$Calories, 0.25)) - IQR 
+out_upper
+out_lower
+```
+
+# **Exercise 32 - A Sampling Distribution for Time to Finish in 2012 Olympic Men's Marathon**
+
+Use *R* to generate a sampling distribution of sample means using a sample size of n=10 from the population of all times to finish the 2016 Olympic Men's Marathon, available in the Minutes column of the file *OlympicMarathon2016*. What are the smallest and largest sample means in the distribution? What is the standard deviation of the sample means *(in other words, what is the standard error?)*
+
+```{r}
+library(boot)
+marathon<- read_excel("datasets/OlympicMarathon2016.xlsx")
+marathon_S=marathon[sample(1:dim(marathon)[1],10),]
+mean.b <- function(d, indices) {
+  mean(d$Minutes[indices])
+}
+marathon_results <- boot(data=marathon_S, statistic=mean.b, R=2000)
+marathon_results
+```
+
+```{r}
+plot(marathon_results)
+```
+
+```{r}
+str(marathon_results)
+```
+
+```{r}
+max(marathon_results$t)
+```
+
+```{r}
+min(marathon_results$t)
+```
+
+```{r}
+sd(marathon_results$t)
+```
+
+```{r}
+boot.ci(marathon_results, type="bca")
+```
+
+# **Exercise 33 - NHL Penalty Minutes**
+
+The file *OttawaSenators2019*, among other data contains the number of points scored and penalty minutes for 26 ice hockey players on the Ottawa Senators NHL team for the 2018--2019 season. Assume that we consider these players to be a sample of all NHL players.
+
+```{r}
+senators = read_excel("datasets/OttawaSenators2019.xlsx")
+```
+
+1.  Create a dotplot of the distribution of penalty minutes (PenMins) for the original sample of 26 players. Comment on the shape, paying particular attention to skewness and possible outliers.
+
+```{r}
+library(ggplot2)
+ggplot(senators, aes(Player, PenMins)) + geom_point()
+
+```
+
+2.  Find the mean and standard deviation of the penalty minute values for the original sample.
+
+    ```{r}
+    mean(senators$PenMins); sd(senators$PenMins)
+    ```
+
+```{=html}
+<!-- -->
+```
+3.  Use *R* to construct a bootstrap distribution for the mean penalty minutes for samples of size n=26 NHL players. Comment on the shape of this distribution, especially compared to the shape of the original sample.
+
+    ```{r}
+    senators_S=senators[sample(1:dim(senators)[1],26),]
+    mean.b <- function(d, indices) {
+      mean(d$PenMins[indices])
+    }
+    senators_results <- boot(data=senators_S, statistic=mean.b, R=2000)
+    plot(senators_results)
+    ```
+
+```{r}
+tab <- as.data.frame(cbind((1:2000), senators_results$t))
+ggplot(tab, aes(V1, V2)) + geom_point()
+```
+
+4.  Compute the standard deviation of the bootstrap means using the distribution in (3.).
+
+    ```{r}
+    sd(senators_results$t)
+    ```
+
+```{=html}
+<!-- -->
+```
+5.  Compare this value to the standard deviation of the penalty minutes in the original sample.
+
+```{r}
+sd(senators_S$PenMins)
+```
+
+6.  Construct a 95% confidence interval for the mean penalty minutes of NHL players.
+
+```{r}
+# get 95% confidence interval
+boot.ci(senators_results, type="bca")
+```
+
+7.  Give a reason why it might not be reasonable to use the players on one team as a sample of all players in a league.
+
+A specific team may, and most probably is not representative of all teams.

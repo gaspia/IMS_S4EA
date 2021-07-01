@@ -1,0 +1,22 @@
+---
+title: "Hypothesis Testing"
+output: html_notebook
+---
+
+- Many people believe that the average body temperature of a healthy adult is 37o Celsius. 
+- We want to know if there is evidence that the average body temperature of a healthy adult is diferent from 37o Celsius.
+- Our null hypothesis is that the population mean is 37o Celsius: H0 : µ = 37oC.
+- Our alternative hypothesis is that the population mean is not 37o Celsius: H0 : µ = 37oC.
+
+
+```{r}
+bt=read.csv("datasets/bodytemp.csv", header=T)
+head(bt)
+mean(bt$BodyTemp) 
+sd(bt$BodyTemp) 
+dim(bt)
+```
+
+
+
+

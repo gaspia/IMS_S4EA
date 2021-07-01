@@ -1,0 +1,126 @@
+---
+title: "Multiple Linear Regression"
+output: html_notebook
+---
+
+# **Exercise 1**
+
+This problem is adapted from one in McClave et al. (2005) [McClave, J. T., Benson, P. G., and Sincich, T. Prentice Hall, Upper Saddle River, NJ, 9th edition, 2005.]. The data file *NYJUICE* contains data on demand for cases of 96-ounce containers of chilled orange juice over 40 sale days at a warehouse in New York City that has been experiencing a large number of out-of-stock situations. To better understand demand for this product, the company wishes to model the number of cases of orange juice, *Cases*, as a function of sale day, *Day*.
+
+1.  Construct a scatterplot for these data, and add a quadratic regression line to your scatterplot.
+
+2.  Fit a simple linear regression model to these data, that is, use statistical software to fit the model with as the single predictor and write out the resulting fitted regression equation.
+
+3.  Fit a quadratic model to these data, that is, use statistical software to fit the model with both as predictors and write out the resulting fitted regression equation. You will first need to create the term in the dataset.
+
+4.  Based on the scatterplot in part 1., it appears that a quadratic model would better explain variation in orange juice demand than a simple linear regression model. To show this formally, do a hypothesis test to assess whether the term is statistically significant in the quadratic model (at a 5% significance level). If it is, the more complicated quadratic model is justified. If not, the simpler simple linear regression model would be preferred.
+
+```{r}
+plot(cars)
+```
+
+# **Exercise 6**
+
+The **BEVERAGE** data file (kindly provided by Dr. Wolfgang Jank at the University of Maryland) contains the following quarterly data on sales of a popular soft drink for the period 1986-1998:
+
+-   Sales = quarterly sales (U.S \$ million)
+
+-   Time = time period (consecutive numbers from 1 to 52)
+
+-   D1 = indicator variable for quarter 1
+
+-   D2 = indicator variable for quarter 2
+
+-   D3 = indicator variable for quarter 3
+
+The reference level for the indicator variables is quarter 4.
+
+```{r}
+beverage = read.csv("datasets/beverage.csv")
+head(beverage)
+```
+
+Draw a scatterplot of Sales on the vertical axis versus Time on the horizontal axis and connect the points on the plot with lines. Based on the plot, why would it be inappropriate to fit a simple linear regression model with Sales as the response variable and Time as the predictor variable?
+
+```{r}
+ggplot(data = beverage, aes(Time, Sales)) + geom_line()
+```
+
+There is no independence in observations and our regression line will not take into account the seasonality, and will not model our full phenomenon.
+
+2.  One way to take into account the seasonality of these data is to fit a multiple linear regression model with Sales as the response variable and (D1, D2, D3, Time) as the predictor variables. Fit this model and draw a scatterplot of the studentized residuals from the model on the vertical axis versus Time on the horizontal axis. Based on the plot, why is this model also inappropriate?
+
+```{r}
+model_2 <- lm(Sales ~ Time + D1 + D2 + D3, data = beverage)
+summary(model_2)
+```
+
+```{r}
+plot(model_2)
+```
+
+```{r}
+stres = rstudent(model_2)
+plot(beverage$Time, stres,
+     ylab = "studentized residuals",
+     xlab = "Time")
+```
+
+3.  One possible remedy for models with excessive autocorrelation is to try adding the lag-1 response variable as a predictor variable. Create the lag-1 response variable, LagSales. Next remove the first observation of each variable (since there is no value of LagSales when Time=1). Then fit a multiple linear regression model with sales as the response variable and (D1, D2, D3 and LagSales) as the predictor variables. Draw a scatterplot of the studentized residuals from this model on the vertical axis versus Time on the horizontal axis. Comparing this plot with the residual plot from part 2. , does including appear to correct any autocorrelation problems?
+
+```{r}
+beverage <- beverage %>% mutate(lag = lag(Sales)) %>% filter(!is.na(lag))
+head(beverage)
+```
+
+```{r}
+model_3 <- lm(Sales ~ lag + D1 + D2 + D3, data = beverage)
+summary(model_3)
+```
+
+```{r}
+plot(model_3)
+```
+
+```{r}
+stres = rstudent(model_3)
+plot(beverage$Time, stres,
+     ylab = "studentized residuals",
+     xlab = "Time")
+```
+
+4.  Use a simple linear regression model with Sales as the response variable and Time as the predictor variable to predict for the four quarters in 1999. Calculate the prediction errors if Sales for the four quarters in 1999 were actually 4,428, 5,379, 5,195, and 4,803, respectively. Also calculate the prediction errors for the models you fit in parts 2. and 3. Which model provides the best predictions overall?
+
+```{r}
+model_1 <- lm(Sales ~ Time, data = beverage)
+summary(model_1)
+```
+
+```{r}
+variable_time<-data.frame(Time = c(53, 54, 55, 56))
+variable_Q <- data.frame(D1 = c(1, 0, 0, 0), D2 = c(0, 1, 0, 0), D3 = c(0, 0, 1, 0))
+two_variables <- cbind(variable_time, variable_Q)
+model_1_predictions <- predict(model_1, newdata = variable_time)
+model_2_predictions <- predict(model_2, newdata = two_variables)
+model_3_predictions_1 <- predict(model_3, newdata = data.frame( D1 = 1, D2 = 0, D3= 0, lag = beverage$Sales[50]))
+model_3_predictions_2 <- predict(model_3, newdata = data.frame( D1 = 0, D2 = 1, D3= 0, lag = model_3_predictions_1))
+model_3_predictions_3 <- predict(model_3, newdata = data.frame( D1 = 0, D2 = 0, D3= 1, lag = model_3_predictions_2))
+model_3_predictions_4 <- predict(model_3, newdata = data.frame( D1 = 0, D2 = 0, D3= 0, lag = model_3_predictions_3))
+model_3_predictions <- c(model_3_predictions_1, model_3_predictions_2, 
+                         model_3_predictions_3, model_3_predictions_4)
+
+actuals = c(4428, 5379, 5195, 4803)
+
+rmse_model_1 = sqrt(mean(sum(model_1_predictions - actuals)^2))
+rmse_model_1
+```
+
+```{r}
+rmse_model_2 = sqrt(mean(sum(model_2_predictions - actuals)^2))
+rmse_model_2
+```
+
+```{r}
+rmse_model_3 = sqrt(mean(sum(model_3_predictions - actuals)^2))
+rmse_model_3
+```

@@ -1,0 +1,42 @@
+---
+title: "01 Sampling"
+output: html_notebook
+---
+
+Creating a Sample in R
+
+```{r}
+# Creating a population of students and ages 
+# Storing it in a data frame
+Names=c("Bob","Mary","Wlliam","George","Lucas", "Mathew","Angel","Steven","Ariana","Chen")
+length(Names)
+
+Ages=c(22,23,21,25,28,25,23,23,32,28) 
+length(Ages)
+
+Pop=data.frame(Names=Names,Ages=Ages)
+
+Pop
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+```{r}
+# Checking results
+head(Pop)
+
+```
+```{r}
+# Sampling: drawing a sample of 4 students out 
+# of the 10 without replacement 
+
+S=sample(1:10,size=4,replace=FALSE) 
+S
+```
+
+```{r}
+# Creating a final final containing data 
+S.data=Pop[S,] 
+S.data
+
+```
+

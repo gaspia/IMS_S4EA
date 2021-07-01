@@ -75,6 +75,32 @@ Based on the results from part 4., fit a new model to the data, and write two se
 plot(cars)
 ```
 
+# **Exercise 5**
+
+This problem is adapted from one in McClave et al. (2005) [McClave, J. T., Benson, P. G., and Sincich, T. Prentice Hall, Upper Saddle River, NJ, 9th edition, 2005.]. The data file **COLLGPA** contains data that can be used to determine whether college grade point average (GPA) for 40 students (Gpa) can be predicted from:
+
+-   Verb = verbal score on a college entrance examination (percentile),
+
+-   Math = mathematics score on a college entrance examination (percentile).
+
+    Admission decisions are often based on college entrance examinations (among other things), so this is a common use of regression modeling.
+
+-   Use statistical software to fit the model
+
+E(Gpa)=b0+b1Verb+b2Math.\
+
+Save the studentized residuals and draw a scatterplot with these studentized residuals on the vertical axis and Verb on the horizontal axis. Repeat with Math on the horizontal axis. Add a "loess" fitted line to each of the plots to help you assess the zero mean regression errors assumption. Do either of the plots suggest that this assumption is violated for this model?
+
+```{r}
+students=read.csv("collgpa.csv")
+students_model = lm(Gpa ~ Verb + Math, data = students)
+res_stud <- rstandard(students_model)
+dat_for_plot = cbind(Verb = students$Verb, Math = students$Math, res_stud)
+dat_for_plot <- as.data.frame(dat_for_plot)
+
+ggplot(dat_for_plot, aes(Verb, res_stud)) + geom_point() + geom_smooth()
+```
+
 # Exercise 6
 
 The BEVERAGE data file (kindly provided by Dr. Wolfgang Jank at the University of Maryland) contains the following quarterly data on sales of a popular soft drink for the period 1986-1998:

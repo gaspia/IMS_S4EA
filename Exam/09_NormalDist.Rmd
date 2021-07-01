@@ -1,0 +1,312 @@
+---
+title: "09 Inference"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.
+
+# **Exercise 1 - Statistical inference I**
+
+For each question, indicate whether it is best assessed by using a confidence interval, a hypothesis test, or whether statistical inference is not relevant to answer it. If inference is not relevant, explain why.
+
+1.  What percent of US voters support instituting a national kindergarten through 12th grade math curriculum?
+
+A Confidence interval. We will not be able to ask all US voters, we will have to use a sample, and we want to find p. We will find p̂ and we should not stay with the point estimate, but calculate a confidence interval.
+
+2.  Do basketball players hit a higher proportion of free throws when they are playing at home than when they are playing away?
+
+Assuming that is not possible to collect information about all basketball players in all games... An hypotheses test. We want to know if the proportion of free throws is higher when they play at home. The null hypotheses is that both proportions (home or out) are equal and the alternative hypotheses is that the phome \> pout.
+
+3.  Do a majority of adults riding a bicycle wear a helmet?
+
+An hypotheses test.
+
+4.  On average, were the 23 players on the 2010 Canadian Olympic hockey team older than the 23 players on the 2010 US Olympic hockey team?
+
+Statistical inference is not relevant to answer it, we have all the data. Is only 46 data points, we can calculate the two mean values.
+
+5.  What proportion of people using a public restroom wash their hands after going to the bathroom?
+
+A confidence interval.
+
+6.  On average, how much more do adults who played sports in high school exercise than adults who did not play sports in high school?
+
+An hypotheses test.
+
+7.  In 2010, what percent of the US Senate voted to confirm Elena Kagan as a member of the Supreme Court?
+
+We have p, we do not need statistical inference.
+
+8.  What is the average daily calorie intake of 20-year-old males?
+
+A confidence interval.
+
+# **Exercise 2 - Does Vitamin C Cure the Common Cold?**
+
+A study conducted on a college campus tested to see whether students with colds who are given large doses of vitamin C recover faster than students who are not given the vitamin C. The p-value for the test is 0.003.
+
+1.  Given the p-value, what is the conclusion of the test: Reject H0 or do not reject H0?
+
+Assuming we want a confidence level of 95%, we reject the null hypotheses.
+
+2.  Results of statistical inference are only as good as the data used to obtain the results. No matter how low a p-value is, it has no relevance (and we can't trust conclusions from it) if the data were collected in a way that biases the results. Describe an inappropriate method of collecting the data for this study that would bias the results so much that a conclusion based on the p-value is very unreliable.
+
+If we do not randomized students and gave larger doses of vitamin c to those with milder symptoms.
+
+3.  Describe a method of collecting the data that would allow us to interpret the p-value appropriately and to extend the results to the broader student population.
+
+A double blind study, with students randomization. Half would receive larger doses of vitamin c and the other half would receive a lower dose of vitamin c. 
+
+4.  Assuming the data were collected as you describe in part 3., use the p-value to make a conclusion about vitamin C as a treatment for students with a common cold.
+
+We are confident to say that larger doses of vitamin c help students with cold to recover faster.
+
+\
+**Exercise 3 - Effect of Smoking on Pregnancy Rate**
+
+Studies have concluded that smoking while pregnant can have negative consequences, but could smoking also negatively affect one's ability to become pregnant? A study collected data on 678 women who had gone off birth control with the intention of becoming pregnant. Smokers were defined as those who smoked at least one cigarette a day prior to pregnancy. We are interested in the pregnancy rate during the first cycle off birth control. The results are summarized in the following table:
+
+    ##              Smoker     Non-smoker Sum       
+    ## Pregnant           38.0      206.0      244.0
+    ## Not pregnant       97.0      337.0      434.0
+    ## Sum               135.0      543.0      678.0
+
+We wish to estimate the difference in the proportion who successfully get pregnant, between smokers and non-smokers.
+
+1.  Find the best point estimate for the difference in proportions.
+
+```{r}
+p_p_smoker = 38/135
+p_p_smoker
+```
+
+```{r}
+p_p_nonsmoker = 206/543
+p_p_nonsmoker
+
+```
+
+```{r}
+dif_preg <- p_p_smoker - p_p_nonsmoker
+dif_preg
+
+```
+
+Non-smokers get pregnant at a higher proportion. The difference is negative, and is 9.8 percentage points higher for the non-smokers.
+
+2.  Use *R* or other technology to find and interpret a 90% confidence interval for the difference in proportions. Is it plausible that smoking has no effect on pregnancy rate?
+
+Option 1 - Building a confidence interval (based on the CLT)
+
+1.  checking normality assumptions, both groups have more than 10 successes and 10 failures? Yes
+
+2.  building the confidence interval
+
+```{r}
+## Mnnual try
+ps_hat = 0.28
+ps_se = sqrt((ps_hat*(1-ps_hat)/135))
+
+pns_hat = 0.38
+pns_se = sqrt((pns_hat*(1-pns_hat)/543))
+
+z = 1.645
+
+ps_ci_up = p_p_smoker + z*ps_se
+ps_ci_lo = p_p_smoker - z*ps_se
+ps_ci = c(ps_ci_lo,ps_ci_up)
+ps_ci
+```
+
+```{r}
+# unsing R
+prop.test(c(38, 206), c(135,543), conf.level = 0.9)
+```
+
+Option 2 - Using bootstrapping - With a contingency table only
+
+1.  Calculate the difference between two independent binomial distributions 10000 times.
+
+2.  Calculate the confidence interval using the percentile method.
+
+3.  Calculate the confidence interval using the standard error method.
+
+```{r}
+n_s = 135
+n_ns = 543
+s <- matrix(0, nrow = 1, ncol = 10000)
+for (i in 1:10000){
+  s[,i] = sum(rbinom(n_s, 1, p_p_smoker))/n_s - sum(rbinom(n_ns, 1, p_p_nonsmoker))/n_ns
+}
+
+hist(s)
+```
+
+```{r}
+quantile(s, probs = c(0.05, 0.5, 0.95))
+```
+
+```{r}
+s_error = sqrt((p_p_smoker*(1-p_p_smoker))/n_s + (p_p_nonsmoker*(1-p_p_nonsmoker))/n_ns)
+c_i_l = mean(s) - qnorm(0.95)*s_error
+c_i_l
+```
+
+```{r}
+c_i_u = mean(s) + qnorm(0.95)*s_error
+c_i_u
+```
+
+Option 3 - Using bootstrapping, assuming we had a sample and not only a contingency table.
+
+1.  Create two possible samples, one for each group.
+
+2.  Create 10000 samples of each independent group.
+
+3.  Calculate the difference between the samples.
+
+4.  Calculate the confidence interval using the percentile method.
+
+5.  Calculate the confidence interval using the standard error method.
+
+```{r}
+require(permute) ## load package
+z_s <- rep(0,(n_s - 38)) # generate zeros
+n_z_s <- rep(1, 38) # generate non zeros
+smokers <- c(z_s, n_z_s) # combine 
+shuffle(smokers, control = how())
+smokers <- permute(smokers, control) #permute
+
+z_ns <- rep(0,(n_ns - 206)) # generate zeros
+n_z_ns <- rep(1, 206) # generate non zeros
+nonsmokers <- c(z_ns, n_z_ns) # combine 
+nonsmokers <- permute(nonsmokers) #permute
+
+S.bootS=matrix(0, nrow=n_s, ncol=10000) # to store the data
+S.bootNS=matrix(0, nrow=n_ns, ncol=10000) # to store the data
+
+for (i in 1:10000){S.bootS[,i]=smokers[sample(1:n_s,n_s,replace=TRUE)]}
+for (i in 1:10000){S.bootNS[,i]=nonsmokers[sample(1:n_ns,n_ns,replace=TRUE)]}
+
+mean.S=colMeans(S.bootS) # 10000 sample means
+mean.NS=colMeans(S.bootNS) # 10000 sample means
+df=mean.S-mean.NS # differences of 10000 samples
+
+hist(df)
+
+```
+
+```{r}
+quantile(df, probs = c(0.05, 0.5, 0.95))
+```
+
+Option 4 - Randomization distribution procedure to calculate a p-value
+
+1.  Create two possible samples, one for each group, with the proportion of the whole group.
+
+2.  Create 10000 samples of each independent group.
+
+3.  Calculate the difference between the samples.
+
+4.  Calculate the p-value of a value as extreme or more extreme, in the direction of the alternative hypotheses would be seen on a population without a difference.
+
+```{r}
+n = 678
+p = 244/678 #36% of total group got pregnant
+
+z_s <- rep(0,ceiling(n_s - (n_s*p))) # generate zeros
+n_z_s <- rep(1, floor(n_s*p)) # generate non zeros
+smokers <- c(z_s, n_z_s) # combine 
+smokers <- permute(smokers) #permute
+
+z_ns <- rep(0,ceiling(n_ns - (n_ns*p))) # generate zeros
+n_z_ns <- rep(1, floor(n_ns*p)) # generate non zeros
+nonsmokers <- c(z_ns, n_z_ns) # combine 
+nonsmokers <- permute(nonsmokers) #permute
+
+S.bootS=matrix(0, nrow=n_s, ncol=10000) # to store the data
+S.bootNS=matrix(0, nrow=n_ns, ncol=10000) # to store the data
+
+for (i in 1:10000){S.bootS[,i]=smokers[sample(1:n_s,n_s,replace=TRUE)]}
+for (i in 1:10000){S.bootNS[,i]=nonsmokers[sample(1:n_ns,n_ns,replace=TRUE)]}
+
+mean.S=colMeans(S.bootS) # 10000 sample means
+mean.NS=colMeans(S.bootNS) # 10000 sample means
+df=mean.S-mean.NS # differences of 10000 samples
+
+mean(df)
+```
+
+# **Exercise 18 - Infection in Dialysis Patients**
+
+The data show the time to infection, at the point of insertion of the catheter, for kidney patients using portable dialysis equipment.
+
+2,5,6,7,7,8,12,13,15,15,17,22,22,23,24,27,30,34,39,53,54,63,96,113,119,130,132,141,149,152,152,185,190,292,402,447,511,536
+
+There are 38 patients, and the data give the first observation for each patient. The five number summary for these data is:
+
+    ## [1]   2  15  46 149 536
+
+1.  Identify any outliers in the data. Justify your answer.
+
+Our method to define outliers: any value that is below Q1−1.5∗IQR or above Q3+1.5∗IQR
+
+```{r}
+IQR = 149 - 15
+15 - 1.5*IQR
+```
+
+```{r}
+149 + 1.5*IQR
+```
+
+2.  Draw the boxplot.
+
+```{r}
+dialysis = c(2,5,6,7,7,8,12,13,15,15,17,22,22,23,24,27,30,34,39,53,54,63,96,113,119,130,132,141,149,152,152,185,190,292,402,447,511,536)
+boxplot(dialysis)
+```
+
+3.  Find a 99% confidence interval for the mean time to infection for these patients. Give the best estimate, the margin of error, and give and interpret the confidence interval.
+
+```{r}
+mean_d = mean(dialysis)
+mean_d
+```
+
+Let us test the assumptions, to decide on what method should be used, we do not know if the population mean is normally distributed, but we have more than 30 cases, so we can use the t distribution
+
+```{r}
+t.test(dialysis~1, conf.level = 0.99)
+```
+
+```{r}
+margin_of_error = qt(p = 0.995, df = 38-1) * (sd(dialysis)/sqrt(38)) #multiplier * standard error
+margin_of_error
+```
+
+4.  Is it reasonable to find a patient with a time to infection of 24 days? How about 152 days?
+
+Everything is reasonable, if that is metabolically possible. Those would not be very frequent values, but reasonable, in fact we have some in our sample, and are not outliers.
+
+5.  Is it reasonable to find the mean time to infection in the population is 24 days? How about 152 days?
+
+We need to do an hypotheses test, with the null hypotheses of the mean value to be 24 or 152 days. We will reject or fail to reject the null depending on the p-value of each test.
+
+```{r}
+null_24 = (mean(dialysis) - 24) / (sd(dialysis) / sqrt(38))
+null_24
+```
+
+```{r}
+pt(null_24, (38-1), lower.tail = F)
+```
+
+```{r}
+null_152 = (mean(dialysis)- 152) / (sd(dialysis) / sqrt(38))
+null_152
+```
+
+```{r}
+pt(null_152, (38-1), lower.tail = F)
+```

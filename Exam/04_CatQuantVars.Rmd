@@ -1,0 +1,63 @@
+---
+title: "04 - Categorical and Quantitative Vars"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+baseball=read.table("datasets/baseball.dat.txt")
+plot(baseball[,c(1,2)], xlab="Salary", ylab="Batting average", main="Scatterplot of Batting average vs Salary")
+
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+
+```{r}
+
+shoesize=read.csv("datasets/shoesize.csv",header=TRUE, sep = ";") 
+shoesize=shoesize[,c(1,2,3,4)] 
+plot(shoesize$Height,shoesize$Size, xlab="Height", ylab="Shoe size",main="Scatterplot of Shoe size vs Height")
+
+
+```
+
+
+```{r}
+HW=c(16,20,19,19,16,15,20,20,19)
+MT=c(15,19,13,14,18,14,20,20,18) 
+
+plot(HW,MT, xlab="Homework average", ylab="First midterm test", main="Scaterplot of Homework and Midterm grades", sub="Forecasting Methods, Spring 2017")
+abline(lm(MT~HW))
+#perason correlation
+cor(MT,HW)
+
+cor(HW,MT)
+
+
+```
+
+
+
+```{r}
+body=read.table("datasets/body.dat.txt",header=FALSE) 
+names(body)[c(23,24,25)]=c("Weight","Height","Gender")
+body$Gender<-factor(body$Gender, levels=c(0,1), labels=c("Female","Male"))
+
+men=subset(body, levels(body$Gender)=="Female") 
+women=subset(body, levels(body$Gender)=="Male") 
+plot(men$Height,men$Weight, xlab="Height (cm)", ylab="Weight (kg)", main="Scatterplot of Weight (kg) vs Height (cm)", col="red", pch=2)
+points(women$Height,women$Weight, col="blue", pch=3)
+legend("topright",c('Male', 'Female'), col=c("red","blue"), pch=c(2,3))
+
+
+
+
+```
+
+
+

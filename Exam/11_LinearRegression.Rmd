@@ -1,0 +1,435 @@
+---
+title: "SfEDA selected exercises - Lab 3"
+author: "Jorge M. Mendes and M. Helena Baptista"
+date: "2021"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE)
+library("readxl")
+library(plyr)
+library(knitr)
+library(exams)
+```
+
+# Exercise 1
+
+The *INTERNET* data file contains data from 2010 relating to gross
+domestic product (GDP) per capita in US\$ thousands and the percentage
+of the population that are Internet users for 212 countries. Here, GDP
+is based on purchasing power parities to account for between-country
+differences in price levels. This problem investigates whether there is
+a linear association between these two variables. In particular, how
+effective is it to use to predict using simple linear regression?
+
+1.  Find the least squares line for the data, that is, use *R* to find
+    the intercept and slope of the least squares line, and write down
+    the equation of that line.
+
+```{r echo = T, comment = NA}
+library(readr)
+internet <- read_csv("datasets/internet.csv")
+View(internet)
+```
+
+```{r echo = T, comment = N}
+model1 <- lm(Int ~ Gdp, data = internet)
+summary(model1)
+plot(model1$fitted.values, model1$residuals)
+plot(model1$residuals, internet$Int)
+hist(model1$residuals)
+qqnorm(model1$residuals, main="Normal Q-Q Plot of Std Residuals")
+qqline(model1$residuals)
+```
+
+2.  Interpret the estimates of the slope and the intercept in the
+    context of the problem.
+
+    Slope: We have a slope value of 1,36
+
+    Intercept: 12,36 (note that it doesn't make sense to consider a GDP
+    of 0 in any cases)
+
+    Regression line equation = 12,36 + 1,36 \* Xi
+
+Model Quality:
+
+-   Std. Error: 18.14 (We can expect that our predicted values can vary
+    ± multiplier \\\**18.14 - for a 95% conf. interval 1,96\\\*18.14*)
+
+-   Coefficient Determination - R- Squared: 0.58 (GDP can explain 58% of
+    the variability of the internet usage)
+
+-   Correlation:
+
+    -   our p value is \< 0.05 so we can reject the null hypothesis - "
+        there is a non 0 slope"
+
+2.  Predict the percentage of Internet users if GDP per capita is
+    US\$20,000.
+
+```{r echo = T, comment = N}
+Country <- c("Country x")
+Gdp <- c(20)
+new_data <- data.frame(Country, Gdp)
+predict(model1, newdata = new_data)
+
+```
+
+4.  Draw a scatterplot with Internet on the vertical axis and GDP on the
+    horizontal axis, and add the least squares line to the plot.
+
+```{r echo = T, comment = N}
+library(ggplot2)
+library(ggpubr)
+ggplot(data = internet, aes(x = Gdp, y = Int)) + 
+  geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
+        geom_point()+
+        stat_regline_equation(label.y = 110) #this means at 110th unit regresion line equation will be shown
+```
+
+5.  Based on the scatterplot, do you think it is appropriate to use this
+    simple linear regression model in this problem, or is the model
+    potentially misleading (and if so, how)?
+
+Our model and best-fit line may be misleading, considering the graph and
+the 58% R2 value.
+
+# Exercise 2
+
+The *MLB* data file contains the number of wins and the batting average
+calculated as number of hits divided by number of at-bats) for the 2010
+regular season. This problem is a highly simplified introduction to
+which uses baseball statistics to find objective insights into the game.
+
+1.  Remove the American League teams from the data file to leave just
+    the 16 teams in the National League. Consider using simple linear
+    regression to predict the number of wins from a team's batting
+    average. Would you expect the slope of the resulting least squares
+    line to be positive or negative? Explain.
+
+```{r echo = T, comment = N}
+library(readr)
+mlb <- read_csv("datasets/mlb.csv")
+View(mlb)
+```
+
+```{r echo = T, comment = N}
+unique(mlb$League)
+library(dplyr)
+national_league <- mlb %>% filter(League == "NL")
+cor(national_league$Win, national_league$Bat)
+
+```
+
+```{r}
+model2 <- lm(Bat ~ Win, data = national_league)
+summary(model1)
+plot(model2$fitted.values, model2$residuals)
+plot(model2$residuals, national_league$Win)
+hist(model2$residuals)
+qqnorm(model2$residuals, main="Normal Q-Q Plot of Std Residuals")
+qqline(model2$residuals)
+```
+
+2.  Construct an appropriate scatterplot of the data. Does the pattern
+    of points in the scatterplot agree with your answer from part 1.?
+
+```{r echo = T, comment = N}
+
+ggplot(national_league, aes(x=Bat, y=Win)) + geom_point()
+```
+
+3.  Find the intercept and slope of the least squares line and write
+    down the equation of that line.
+
+```{r echo = T, comment = N}
+model2 <- lm(Win~Bat, data = national_league)
+summary(model2)
+
+```
+
+4.  Add the least squares line to the scatterplot from part 2.. Does the
+    least squares line seem to adequately represent the dominant pattern
+    in the points on the scatterplot?
+
+```{r echo = T, comment = N}
+ggplot(national_league, aes(x=Bat, y=Win)) + geom_point() +
+  geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
+        geom_point()+
+        stat_regline_equation(label.y = 110) #this means at 110th unit regresion line equation will be shown
+```
+
+5.  Does the number of wins appear to be strongly associated with a
+    team's batting average? Explain.
+
+```{r echo = T, comment = N}
+confint(model2)
+```
+
+6.  Interpret the estimates of the slope and the intercept in the
+    context of the problem.
+
+7.  Reopen the data file, remove the National League teams from the data
+    file to leave just the 14 teams in the American League, and repeat
+    parts 1. to 6.
+
+# Exercise 3
+
+The *ELECTRICITY* data file contains data on electricity consumption in
+billions of kilowatt-hours (Elec) and gross domestic product (GDP) in
+billions of dollars for the 30 most populous countries. Here, GDP is
+based on purchasing power parities to account for between-country
+differences in price levels. The data file can be used to investigate
+the claim that there is a linear association between electricity
+consumption and GDP. For the purposes of this problem, assume that
+increases in electricity consumption tend to respond to increases in GDP
+(rather than the other way around).
+
+1.  Say which variable should be the predictor variable ($X$) and which
+    the response variable ($Y$) for this problem, and consider the
+    simple linear regression model $E(Y)=b_0+b_1X$.
+
+\*Before looking at the data, say whether the population value would be
+positive or negative under the claim that electricity consumption tends
+to increase in response to increases in GDP.
+
+2.  Plot the data in a scatterplot (make sure that you put the
+    appropriate variables on each axis). Add the least squares line to
+    the scatterplot. Briefly describe the dominant pattern in the points
+    on the scatterplot and their position in relation to the least
+    squares line.
+
+```{r echo = T, comment = N}
+library(readr)
+electricity <- read_csv("electricity.csv")
+View(electricity)
+
+ggplot(electricity, aes(x=Gdp, y=Elec)) + geom_point() +
+  geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
+        geom_point()+
+        stat_regline_equation(label.y = 2000) #this means at 110th unit regresion line equation will be shown
+
+```
+
+3.  Identify the countries with the two highest values of *Gdp*, remove
+    them from the dataset, and redraw the scatterplot and least squares
+    line. How does your visual impression of the scatterplot change?
+
+*Hint: Focus more on what you see overall, not so much on individual
+points. In particular, think about whether the overall trend changes and
+whether the variation of the points about the line changes.*
+
+```{r echo = T, comment = N}
+ggplot(electricity, aes(x=Gdp, y=Elec)) + geom_point() +
+geom_text(
+    label=electricity$Country
+  )
+
+reduced <- electricity %>% filter(Elec < 1000)
+
+ggplot(reduced, aes(x=Gdp, y=Elec)) + geom_point() +
+  geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
+        geom_point()+
+        stat_regline_equation(label.y = 750) #this means at 110th unit regresion line equation will be shown
+```
+
+4.  Fit the appropriate simple linear regression model to the dataset
+    that has the countries with the two highest values of *Gdp* removed.
+    Do the results provide evidence that the claim of a positive
+    association could be true for the remaining 28 countries? *Hint:
+    This problem is asking you to do a hypothesis test. Use a
+    significance level of 5%, make sure you write down the null and
+    alternative hypotheses, and conclude with a statement either
+    supporting or contradicting the claim once you have written up the
+    results of the hypothesis test.*
+
+5.  Based on the graph from part 3. and the model from part 4., which
+    country has a particularly *hight* electricity consumption and which
+    country has a particularly *low* consumption *relative to the
+    dominant pattern for the remaining countries*?
+
+# Exercise 4
+
+In the classes you have been told three numerical measures for
+evaluating a simple linear regression model: the regression standard
+error, $s$, the coefficient of determination, $R^2$, and the
+$t$-statistic for the slope parameter, $b_1$. The purpose of this
+problem is to demonstrate that a simple linear regression model with
+superior measures of fit (i.e., a lower $s$, a higher $R^2$, and a
+higher absolute $t$-statistic,$|t_{b_1}|$) does not necessarily imply
+that the model is more appropriate than a model with a higher a lower
+$R^2$, and a lower absolute $t$-statistic, $|t_{b_1}|$. These three
+measures of model fit should always be used in conjunction with a
+graphical check of the assumptions to make sure that the model is
+appropriate. Use the simulated data from the COMPARE data file, which
+contains a single response variable, and four possible predictor
+variables, Xi, X3, and X4.
+
+1.  Fit a simple linear regression using $X1$ as the predictor. Make a
+    note of the values of the regression standard error, $s$, the
+    coefficient of determination, $R^2$, and the $t$-statistic for the
+    slope parameter, $t_{b_1}$. Also construct a scatterplot of
+    (vertical) versus $X_1$ (horizontal) and add the least squares
+    regression line to the plot.
+
+2.  Repeat part 1., but this time use $X_2$ as the predictor. Do the
+    values of $R^2$, and $t_{b_1}$ suggest a worse or better fit than
+    the model from part 1.? Does the visual appearance of the
+    scatterplot for the $X_2$ model confirm or contradict the numerical
+    findings?
+
+3.  Repeat part 3., but this time use $X_3$ as the predictor. Do the
+    values of $R^2$, and $t_{b_1}$ suggest a worse or better fit than
+    the model from part 1.? Does the visual appearance of the
+    scatterplot for the $X_3$ model confirm or contradict the numerical
+    findings?
+
+4.  Repeat part 4., but this time use $X_4$ as the predictor. Do the
+    values of $R^2$, and $t_{b_1}$ suggest a worse or better fit than
+    the model from part 1.? Does the visual appearance of the
+    scatterplot for the $X_4$ model confirm or contradict the numerical
+    findings?
+
+# Exercise 5 (2.10:IP)
+
+A restaurant owner wishes to model the association between mean daily
+costs, $\text{E}(Costs)$ , and the number of customers served, $Covers$,
+using the simple linear regression model,
+$\text{E}(Costs)=b_0+b_1Covers$. The owner collected a week of data and
+the values for $n = 7$ days are shown in the accompanying table,
+followed by computer output for the resulting regression analysis.
+
+```{r}
+Costs=c(1000,2180,2240,2410,2590,2820,3060)
+Covers=c(0,60,120,133,143,175,175)
+dt=data.frame(Costs=Costs, Covers=Covers)
+kable(dt)
+#
+m1 = lm(Costs~Covers, data=dt)
+summary(m1)
+```
+
+1.  State the set of hypotheses that you would test to determine whether
+    costs are positively linearly associated with the number of
+    customers.
+2.  Is there sufficient evidence of a positive linear association
+    between costs and number of customers? Use significance level 5%.
+3.  Give a practical interpretation of the estimate of the slope of the
+    least squares line.
+4.  Give a practical interpretation, if you can, of the estimate of the
+    intercept of the least squares line.
+5.  Give a practical interpretation of $s$, the estimate of the standard
+    deviation of the random error term in the model.
+6.  Give a practical interpretation of $R^2$, the coefficient of
+    determination for the simple linear regression model.
+
+# Exercise 6 (3.1:IP)
+
+The *MOVIES* data file contains data on 25 movies from "The Internet
+Movie Database" (www.imdb.com). Based on this dataset, we wish to
+investigate whether alltime U.S. box office receipts (*Box* in millions
+of U.S. dollars unadjusted for inflation) are associated with any of the
+following variables:
+
+*Rate* = Internet Movie Database user rating (out of 10)
+
+*User* = Internet Movie Database users rating the movie (in thousands)
+
+*Meta* = "metascore" based on 35 critic reviews (out of 100)
+
+*Len* = runtime (in minutes)
+
+*Win* = award wins
+
+*Nom* = award nominations
+
+Theatrical box office receipts (movie ticket sales) may include
+theatrical re-release receipts, but exclude video rentals, television
+rights, and other revenues.
+
+1.  Write out an equation for a multiple linear regression model for
+    predicting response from just three predictors: *Rate*, *User*, and
+    *Meta*. *Hint: This question is asking you to write an equation for*
+    $\text{E}(Box)$.
+2.  Use *R* to fit this model and write out the estimated multiple
+    linear regression equation [i.e., replace the b's in part 1. with
+    numbers].
+3.  Interpret the estimated regression parameter for in the context of
+    the problem [i.e., put the appropriate number from part 2. into a
+    meaningful sentence, remembering to include the correct units for
+    any variables that you use in your answer].
+
+# Exercise 7 (3.2:IP)
+
+Consider the **MOVIES** data file from Problem 6 again.
+
+1.  Use *R* to fit the following (complete) model for as a function of
+    all six predictor variables:
+    $$\text{E}(Box)=b_0+b_1Rate+b_2+User+b_3Meta+b_4Len+b_5Win+b_6Nom.$$
+    Write down the residual sum of squares for this model.
+2.  Use *R* to fit the following (reduced) model:
+    $$\text{E}(Box)=b_0+b_1Rate+b_2+User+b_3Meta.$$ [This is the model
+    from Problem 6 part 2.] Write down the residual sum of squares for
+    this model.
+3.  Using the results from parts 1. and 2. together with the nested
+    model test $F$-statistic formula, test the null hypothesis
+    $H_0: b_4=b_5=b_6= 0$ in the complete model, using significance
+    level 5%. Write out all the hypothesis test steps and interpret the
+    result in the context of the problem.
+4.  Check your answer for part 3. by using *R* to do the nested model
+    test directly. State the values of the $F$-statistic and the
+    $p$-value, and draw an appropriate conclusion.
+5.  Another way to see whether we should prefer the reduced model for
+    this example is to see whether the regression standard error is
+    smaller for the reduced model than for the complete model and
+    whether adjusted $R^2$ is higher for the reduced model than for the
+    complete model. Confirm whether these relationships hold in this
+    example (i.e., compare the values of $s$ and adjusted $R^2$ in the
+    reduced and complete models).
+
+# Exercise 8 (3.2:IP)
+
+Researchers at General Motors analyzed data on 56 U.S. Standard
+Metropolitan Statistical Areas (SMSAs) to study whether air pollution
+contributes to mortality. These data are available in the **SMSA** data
+file and were obtained from the "Data and Story Library" at
+lib.stat.emu.edu/DASL/ (the original data source is the U.S. Department
+of Labor Statistics). The response variable for analysis is *Mort* = age
+adjusted mortality per 100,000 population (a mortality rate
+statistically modified to eliminate the effect of different age
+distributions in different population groups). The dataset includes
+predictor variables measuring demographic characteristics of the cities,
+climate characteristics, and concentrations of the air pollutant nitrous
+oxide (NO$_x$).
+
+1.  Fit the (complete) model
+    $\text{E}(Mort) = b_0 + b_1Edu + b_2 Nwt + b_3Jant + b_4Rain + b_5Nox+b6Hum+b_7Inc$,
+    where $Edu$ is median years of education, *Nwt* is percentage
+    nonwhite, *Jant* is mean January temperature in degrees Fahrenheit,
+    *Rain* is annual rainfall in inches, *Nox* is the natural logarithm
+    of nitrous oxide concentration in parts per billion, *Hum* is
+    relative humidity, and *Inc* is median income in thousands of
+    dollars. Report the least squares (regression) equation.
+2.  Do a nested model $F$-test (using a significance level of 5%) to see
+    whether and *Inc* provide significant information about the
+    response, *Mort*, beyond the information provided by the other
+    predictor variables.
+3.  Do individual $t$-tests (using a significance level of 5%) for each
+    predictor in the (reduced) model
+    $\text{E}(Mort) = b_0 + b_1Edu + b_2 Nwt + b_3Jant + b_4Rain + b_5Nox$.
+4.  Check the four model assumptions for the model from part 3. *Hint:
+    Hint: Ideally, you should look at six residual plots (five with each
+    of the five predictors on the horizontal axis in turn and one with
+    the predicted values on the horizontal axis) to check the zero mean,
+    constant variance, and independence assumptions. You should also use
+    a histogram and/or QQ-plot to check the normality assumption. The
+    more comprehensive you can be in checking the assumptions, the more
+    confident you can be about the validity of your model.*
+5.  Write out the least squares equation for the model from part 3. Do
+    the signs of the estimated regression parameters make sense in this
+    context?
